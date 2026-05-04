@@ -174,9 +174,14 @@ function renderTableSiswa() {
     dataSiswa.forEach(item => {
         tbody.innerHTML += `
             <tr>
+                <td>${item.NISN || '-'}</td>
                 <td>${item.Nama}</td>
+                <td>${item['Tempat Lahir']}, ${item['Tanggal Lahir']}</td>
+                <td>${item['Jenis Kelamin']}</td>
+                <td>${item.Agama}</td>
+                <td>${item['Nama Orang Tua']}</td>
                 <td>${item.Kelas}</td>
-                <td>${item['No WA Orang Tua']}</td>
+                <td><span class="badge ${item.Status === 'Aktif' ? 'bg-success' : 'bg-secondary'}">${item.Status}</span></td>
                 <td>
                     <button class="btn btn-sm btn-danger" onclick="deleteItem('Siswa', '${item.ID}')">Hapus</button>
                 </td>
@@ -254,8 +259,15 @@ function updateSiswaSelect() {
 async function handleSaveSiswa(e) {
     e.preventDefault();
     const rowData = {
+        NISN: document.getElementById('siswa-nisn').value,
         Nama: document.getElementById('siswa-nama').value,
+        'Tempat Lahir': document.getElementById('siswa-tempat-lahir').value,
+        'Tanggal Lahir': document.getElementById('siswa-tanggal-lahir').value,
+        'Jenis Kelamin': document.getElementById('siswa-jk').value,
+        Agama: document.getElementById('siswa-agama').value,
+        'Nama Orang Tua': document.getElementById('siswa-ortu').value,
         Kelas: document.getElementById('siswa-kelas').value,
+        Status: document.getElementById('siswa-status').value,
         'No WA Orang Tua': document.getElementById('siswa-wa').value
     };
 
