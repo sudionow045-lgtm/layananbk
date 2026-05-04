@@ -72,8 +72,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.getElementById('form-layanan').addEventListener('submit', handleSaveLayanan);
 
     // Form Generic
-    document.getElementById('form-guru').addEventListener('submit', (e) => handleSaveGeneric(e, 'Guru', 'modalGuru', 'form-guru', ['Nama', 'NIP', 'Mata Pelajaran'], ['guru-nama', 'guru-nip', 'guru-mapel']));
-    document.getElementById('form-wali').addEventListener('submit', (e) => handleSaveGeneric(e, 'WaliKelas', 'modalWali', 'form-wali', ['Nama', 'Kelas'], ['wali-nama', 'wali-kelas']));
+    document.getElementById('form-guru').addEventListener('submit', (e) => handleSaveGeneric(e, 'Guru', 'modalGuru', 'form-guru', ['Nama', 'NIP', 'Mata Pelajaran'], ['guru-nama', 'guru-nip', 'guru-mapel'], 'guru-id'));
+    document.getElementById('form-wali').addEventListener('submit', (e) => handleSaveGeneric(e, 'WaliKelas', 'modalWali', 'form-wali', ['Nama', 'Kelas'], ['wali-nama', 'wali-kelas'], 'wali-id'));
+    document.getElementById('form-dcm').addEventListener('submit', (e) => handleSaveGeneric(e, 'DCM', 'modalDCM', 'form-dcm', ['Tanggal', 'Siswa', 'Hasil/Keterangan'], ['dcm-tanggal', 'dcm-siswa', 'dcm-hasil'], 'dcm-id'));
+    document.getElementById('form-potensi').addEventListener('submit', (e) => handleSaveGeneric(e, 'Potensi', 'modalPotensi', 'form-potensi', ['Tanggal', 'Siswa', 'Potensi Diri'], ['potensi-tanggal', 'potensi-siswa', 'potensi-diri'], 'potensi-id'));
+    document.getElementById('form-minat').addEventListener('submit', (e) => handleSaveGeneric(e, 'MinatBakat', 'modalMinat', 'form-minat', ['Tanggal', 'Siswa', 'Minat', 'Bakat'], ['minat-tanggal', 'minat-siswa', 'minat-bidang', 'bakat-bidang'], 'minat-id'));
+    document.getElementById('form-gaya-belajar').addEventListener('submit', (e) => handleSaveGeneric(e, 'GayaBelajar', 'modalGayaBelajar', 'form-gaya-belajar', ['Tanggal', 'Siswa', 'Tipe Gaya Belajar'], ['gaya-belajar-tanggal', 'gaya-belajar-siswa', 'gaya-belajar-tipe'], 'gaya-belajar-id'));
 
     // Form Isi Instrumen
     document.getElementById('form-isi-instrumen').addEventListener('submit', handleSaveJawaban);
@@ -554,6 +558,7 @@ function renderTablePertanyaan() {
                 <td>${item.Pertanyaan}</td>
                 <td><span class="badge bg-info">${item.Kategori}</span></td>
                 <td>
+                    <button class="btn btn-sm btn-warning" onclick="editItem('PertanyaanInstrumen', '${item.ID}')">Edit</button>
                     <button class="btn btn-sm btn-danger" onclick="deleteItem('PertanyaanInstrumen', '${item.ID}')">Hapus</button>
                 </td>
             </tr>
@@ -562,19 +567,24 @@ function renderTablePertanyaan() {
 }
 
 function openModalPertanyaan() {
-    const modal = new bootstrap.Modal(document.getElementById('modalPertanyaan'));
-    modal.show();
+    document.getElementById('form-pertanyaan').reset();
+    document.getElementById('pertanyaan-id').value = '';
+    new bootstrap.Modal(document.getElementById('modalPertanyaan')).show();
 }
 
 async function handleSavePertanyaan(e) {
     e.preventDefault();
+    const id = document.getElementById('pertanyaan-id').value;
     const rowData = {
         Instrumen: document.getElementById('pertanyaan-instrumen').value,
         Pertanyaan: document.getElementById('pertanyaan-teks').value,
         Kategori: document.getElementById('pertanyaan-kategori').value
     };
 
-    const res = await callAPI('addData', { sheetName: 'PertanyaanInstrumen', rowData });
+    const action = id ? 'updateData' : 'addData';
+    const payload = id ? { sheetName: 'PertanyaanInstrumen', id, rowData } : { sheetName: 'PertanyaanInstrumen', rowData };
+
+    const res = await callAPI(action, payload);
     if (res.success) {
         bootstrap.Modal.getInstance(document.getElementById('modalPertanyaan')).hide();
         document.getElementById('form-pertanyaan').reset();
@@ -636,6 +646,21 @@ function handleMockAPI(action, payload) {
             if (!window.mockDb[payload.sheetName]) window.mockDb[payload.sheetName] = [];
             window.mockDb[payload.sheetName].push(newData);
             localStorage.setItem('mock' + payload.sheetName, JSON.stringify(window.mockDb[payload.sheetName]));
+            return { success: true };
+        case 'updateData':
+            const sheetUpdate = window.mockDb[payload.sheetName] || [];
+            const indexUpdate = sheetUpdate.findIndex(item => item.ID === payload.id);
+            if (indexUpdate !== -1) {
+                sheetUpdate[indexUpdate] = { ...sheetUpdate[indexUpdate], ...payload.rowData };
+                localStorage.setItem('mock' + payload.sheetName, JSON.stringify(sheetUpdate));
+                return { success: true };
+            }
+            return { success: false, message: 'ID not found' };
+        case 'deleteData':
+            const sheetDelete = window.mockDb[payload.sheetName] || [];
+            const filteredDelete = sheetDelete.filter(item => item.ID !== payload.id);
+            window.mockDb[payload.sheetName] = filteredDelete;
+            localStorage.setItem('mock' + payload.sheetName, JSON.stringify(filteredDelete));
             return { success: true };
         default:
             return { success: true, data: [] };
@@ -777,6 +802,7 @@ function renderTableSiswa() {
                 <td>${item.Kelas}</td>
                 <td><span class="badge ${item.Status === 'Aktif' ? 'bg-success' : 'bg-secondary'}">${item.Status}</span></td>
                 <td>
+                    <button class="btn btn-sm btn-warning" onclick="editItem('Siswa', '${item.ID}')">Edit</button>
                     <button class="btn btn-sm btn-danger" onclick="deleteItem('Siswa', '${item.ID}')">Hapus</button>
                 </td>
             </tr>
@@ -794,6 +820,7 @@ function renderTableGuru() {
                 <td>${item.NIP}</td>
                 <td>${item['Mata Pelajaran']}</td>
                 <td>
+                    <button class="btn btn-sm btn-warning" onclick="editItem('Guru', '${item.ID}')">Edit</button>
                     <button class="btn btn-sm btn-danger" onclick="deleteItem('Guru', '${item.ID}')">Hapus</button>
                 </td>
             </tr>
@@ -810,6 +837,7 @@ function renderTableWali() {
                 <td>${item.Nama}</td>
                 <td>${item.Kelas}</td>
                 <td>
+                    <button class="btn btn-sm btn-warning" onclick="editItem('WaliKelas', '${item.ID}')">Edit</button>
                     <button class="btn btn-sm btn-danger" onclick="deleteItem('WaliKelas', '${item.ID}')">Hapus</button>
                 </td>
             </tr>
@@ -913,6 +941,7 @@ function renderTableInstrumen(type) {
                 <td>${item.Siswa}</td>
                 ${content}
                 <td>
+                    <button class="btn btn-sm btn-warning" onclick="editItem('${sheetName}', '${item.ID}')">Edit</button>
                     <button class="btn btn-sm btn-danger" onclick="deleteItem('${sheetName}', '${item.ID}')">Hapus</button>
                 </td>
             </tr>
@@ -935,6 +964,7 @@ function renderTableLayanan() {
                 <td>${item['Jenis Layanan']}</td>
                 <td>${item.Keterangan}</td>
                 <td>
+                    <button class="btn btn-sm btn-warning" onclick="editItem('LayananBK', '${item.ID}')">Edit</button>
                     <button class="btn btn-sm btn-danger" onclick="deleteItem('LayananBK', '${item.ID}')">Hapus</button>
                 </td>
             </tr>
@@ -976,6 +1006,7 @@ function updateSiswaSelect() {
 // Form Handlers
 async function handleSaveSiswa(e) {
     e.preventDefault();
+    const id = document.getElementById('siswa-id').value;
     const rowData = {
         NISN: document.getElementById('siswa-nisn').value,
         Nama: document.getElementById('siswa-nama').value,
@@ -988,7 +1019,10 @@ async function handleSaveSiswa(e) {
         Status: document.getElementById('siswa-status').value
     };
 
-    const res = await callAPI('addData', { sheetName: 'Siswa', rowData });
+    const action = id ? 'updateData' : 'addData';
+    const payload = id ? { sheetName: 'Siswa', id, rowData } : { sheetName: 'Siswa', rowData };
+
+    const res = await callAPI(action, payload);
     if (res.success) {
         bootstrap.Modal.getInstance(document.getElementById('modalSiswa')).hide();
         document.getElementById('form-siswa').reset();
@@ -999,6 +1033,7 @@ async function handleSaveSiswa(e) {
 
 async function handleSaveLayanan(e) {
     e.preventDefault();
+    const id = document.getElementById('layanan-id').value;
     const namaSiswa = document.getElementById('layanan-siswa').value;
     const keterangan = document.getElementById('layanan-keterangan').value;
     const tanggal = document.getElementById('layanan-tanggal').value;
@@ -1010,7 +1045,10 @@ async function handleSaveLayanan(e) {
         Keterangan: keterangan
     };
 
-    const res = await callAPI('addData', { sheetName: 'LayananBK', rowData });
+    const action = id ? 'updateData' : 'addData';
+    const payload = id ? { sheetName: 'LayananBK', id, rowData } : { sheetName: 'LayananBK', rowData };
+
+    const res = await callAPI(action, payload);
     if (res.success) {
         bootstrap.Modal.getInstance(document.getElementById('modalLayanan')).hide();
         document.getElementById('form-layanan').reset();
@@ -1037,15 +1075,98 @@ async function deleteItem(sheetName, id) {
     }
 }
 
-// Generic Save Handler
-async function handleSaveGeneric(e, sheetName, modalId, formId, fields, inputIds) {
+function editItem(sheetName, id) {
+    let item;
+    if (sheetName === 'Siswa') {
+        item = dataSiswa.find(i => i.ID === id);
+        if (item) {
+            document.getElementById('siswa-id').value = item.ID;
+            document.getElementById('siswa-nisn').value = item.NISN;
+            document.getElementById('siswa-nama').value = item.Nama;
+            document.getElementById('siswa-tempat-lahir').value = item['Tempat Lahir'];
+            document.getElementById('siswa-tanggal-lahir').value = item['Tanggal Lahir'];
+            document.getElementById('siswa-jk').value = item['Jenis Kelamin'];
+            document.getElementById('siswa-agama').value = item.Agama;
+            document.getElementById('siswa-ortu').value = item['Nama Orang Tua'];
+            document.getElementById('siswa-kelas').value = item.Kelas;
+            document.getElementById('siswa-status').value = item.Status;
+            openModalSiswa();
+        }
+    } else if (sheetName === 'Guru') {
+        item = dataGuru.find(i => i.ID === id);
+        if (item) {
+            document.getElementById('guru-id').value = item.ID;
+            document.getElementById('guru-nama').value = item.Nama;
+            document.getElementById('guru-nip').value = item.NIP;
+            document.getElementById('guru-mapel').value = item['Mata Pelajaran'];
+            openModalGuru();
+        }
+    } else if (sheetName === 'WaliKelas') {
+        item = dataWali.find(i => i.ID === id);
+        if (item) {
+            document.getElementById('wali-id').value = item.ID;
+            document.getElementById('wali-nama').value = item.Nama;
+            document.getElementById('wali-kelas').value = item.Kelas;
+            openModalWali();
+        }
+    } else if (sheetName === 'LayananBK') {
+        item = dataLayanan.find(i => i.ID === id);
+        if (item) {
+            document.getElementById('layanan-id').value = item.ID;
+            document.getElementById('layanan-tanggal').value = item.Tanggal;
+            document.getElementById('layanan-siswa').value = item.Siswa;
+            document.getElementById('layanan-keterangan').value = item.Keterangan;
+            currentLayananType = item['Jenis Layanan'];
+            openModalLayanan();
+        }
+    } else if (sheetName === 'DCM' || sheetName === 'Potensi' || sheetName === 'MinatBakat' || sheetName === 'GayaBelajar') {
+        let dataArr = [];
+        let prefix = '';
+        if (sheetName === 'DCM') { dataArr = dataDCM; prefix = 'dcm'; }
+        else if (sheetName === 'Potensi') { dataArr = dataPotensi; prefix = 'potensi'; }
+        else if (sheetName === 'MinatBakat') { dataArr = dataMinat; prefix = 'minat'; }
+        else if (sheetName === 'GayaBelajar') { dataArr = dataGayaBelajar; prefix = 'gaya-belajar'; }
+
+        item = dataArr.find(i => i.ID === id);
+        if (item) {
+            document.getElementById(`${prefix}-id`).value = item.ID;
+            document.getElementById(`${prefix}-tanggal`).value = item.Tanggal;
+            document.getElementById(`${prefix}-siswa`).value = item.Siswa;
+            if (sheetName === 'DCM') document.getElementById('dcm-hasil').value = item['Hasil/Keterangan'];
+            else if (sheetName === 'Potensi') document.getElementById('potensi-diri').value = item['Potensi Diri'];
+            else if (sheetName === 'MinatBakat') {
+                document.getElementById('minat-bidang').value = item.Minat;
+                document.getElementById('bakat-bidang').value = item.Bakat;
+            } else if (sheetName === 'GayaBelajar') document.getElementById('gaya-belajar-tipe').value = item['Tipe Gaya Belajar'];
+
+            const modalMap = { 'DCM': 'modalDCM', 'Potensi': 'modalPotensi', 'MinatBakat': 'modalMinat', 'GayaBelajar': 'modalGayaBelajar' };
+            new bootstrap.Modal(document.getElementById(modalMap[sheetName])).show();
+        }
+    } else if (sheetName === 'PertanyaanInstrumen') {
+        item = dataPertanyaan.find(i => i.ID === id);
+        if (item) {
+            document.getElementById('pertanyaan-id').value = item.ID;
+            document.getElementById('pertanyaan-instrumen').value = item.Instrumen;
+            document.getElementById('pertanyaan-teks').value = item.Pertanyaan;
+            document.getElementById('pertanyaan-kategori').value = item.Kategori;
+            new bootstrap.Modal(document.getElementById('modalPertanyaan')).show();
+        }
+    }
+}
+
+// Form Generic
+async function handleSaveGeneric(e, sheetName, modalId, formId, fields, inputIds, idFieldId) {
     e.preventDefault();
+    const id = document.getElementById(idFieldId).value;
     const rowData = {};
     fields.forEach((field, index) => {
         rowData[field] = document.getElementById(inputIds[index]).value;
     });
 
-    const res = await callAPI('addData', { sheetName, rowData });
+    const action = id ? 'updateData' : 'addData';
+    const payload = id ? { sheetName, id, rowData } : { sheetName, rowData };
+
+    const res = await callAPI(action, payload);
     if (res.success) {
         bootstrap.Modal.getInstance(document.getElementById(modalId)).hide();
         document.getElementById(formId).reset();
@@ -1061,33 +1182,49 @@ async function handleSaveGeneric(e, sheetName, modalId, formId, fields, inputIds
 
 // Modal Helpers
 function openModalSiswa() {
+    document.getElementById('form-siswa').reset();
+    document.getElementById('siswa-id').value = '';
     new bootstrap.Modal(document.getElementById('modalSiswa')).show();
 }
 
 function openModalLayanan() {
+    document.getElementById('form-layanan').reset();
+    document.getElementById('layanan-id').value = '';
     new bootstrap.Modal(document.getElementById('modalLayanan')).show();
 }
 
 function openModalGuru() {
+    document.getElementById('form-guru').reset();
+    document.getElementById('guru-id').value = '';
     new bootstrap.Modal(document.getElementById('modalGuru')).show();
 }
 
 function openModalWali() {
+    document.getElementById('form-wali').reset();
+    document.getElementById('wali-id').value = '';
     new bootstrap.Modal(document.getElementById('modalWali')).show();
 }
 
 function openModalDCM() {
+    document.getElementById('form-dcm').reset();
+    document.getElementById('dcm-id').value = '';
     new bootstrap.Modal(document.getElementById('modalDCM')).show();
 }
 
 function openModalPotensi() {
+    document.getElementById('form-potensi').reset();
+    document.getElementById('potensi-id').value = '';
     new bootstrap.Modal(document.getElementById('modalPotensi')).show();
 }
 
 function openModalMinat() {
+    document.getElementById('form-minat').reset();
+    document.getElementById('minat-id').value = '';
     new bootstrap.Modal(document.getElementById('modalMinat')).show();
 }
 
 function openModalGayaBelajar() {
+    document.getElementById('form-gaya-belajar').reset();
+    document.getElementById('gaya-belajar-id').value = '';
     new bootstrap.Modal(document.getElementById('modalGayaBelajar')).show();
 }
