@@ -58,9 +58,11 @@ const DEFAULT_QUESTIONS = {
 
 // Initialize
 document.addEventListener('DOMContentLoaded', async () => {
-    // Load settings first
-    await refreshData();
+    // Check login state immediately to avoid showing login screen if already logged in
     checkLogin();
+
+    // Load settings and data in background
+    refreshData();
 
     // Login Form
     document.getElementById('login-form').addEventListener('submit', handleLogin);
@@ -114,8 +116,8 @@ function toggleLoginFields() {
 }
 
 function checkLogin() {
-    const role = sessionStorage.getItem('userRole');
-    const userData = JSON.parse(sessionStorage.getItem('currentUser') || 'null');
+    const role = localStorage.getItem('userRole');
+    const userData = JSON.parse(localStorage.getItem('currentUser') || 'null');
 
     if (role && (role === 'admin' || userData)) {
         userRole = role;
@@ -140,7 +142,7 @@ async function handleLogin(e) {
 
         // Username admin bersifat case-insensitive (admin/Admin/ADMIN tetap bisa)
         if (username.toLowerCase() === 'admin' && password === adminPass) {
-            sessionStorage.setItem('userRole', 'admin');
+            localStorage.setItem('userRole', 'admin');
             userRole = 'admin';
             showApp();
         } else {
@@ -156,8 +158,8 @@ async function handleLogin(e) {
         // Di sini kita cek data siswa yang ada
         const siswa = dataSiswa.find(s => s.NISN === nisn);
         if (siswa && password === nisn) {
-            sessionStorage.setItem('userRole', 'siswa');
-            sessionStorage.setItem('currentUser', JSON.stringify(siswa));
+            localStorage.setItem('userRole', 'siswa');
+            localStorage.setItem('currentUser', JSON.stringify(siswa));
             userRole = 'siswa';
             currentUser = siswa;
             showApp();
@@ -168,8 +170,8 @@ async function handleLogin(e) {
 }
 
 function logout() {
-    sessionStorage.removeItem('userRole');
-    sessionStorage.removeItem('currentUser');
+    localStorage.removeItem('userRole');
+    localStorage.removeItem('currentUser');
     location.reload();
 }
 
@@ -688,66 +690,75 @@ function handleMockAPI(action, payload) {
     }
 }
 
+let isRefreshing = false;
+
 async function refreshData() {
-    // Load settings first as it's needed for login and UI
-    const resSettings = await callAPI('getSettings', {});
-    if (resSettings.success) {
-        appSettings = resSettings.data;
-        updateUIFromSettings();
-    }
+    if (isRefreshing) return;
+    isRefreshing = true;
 
-    const resSiswa = await callAPI('getData', { sheetName: 'Siswa' });
-    if (resSiswa.success) {
-        dataSiswa = resSiswa.data;
-        updateSiswaSelect();
-    }
+    try {
+        // Load settings first as it's needed for login and UI
+        const resSettings = await callAPI('getSettings', {});
+        if (resSettings.success) {
+            appSettings = resSettings.data;
+            updateUIFromSettings();
+        }
 
-    const resLayanan = await callAPI('getData', { sheetName: 'LayananBK' });
-    if (resLayanan.success) {
-        dataLayanan = resLayanan.data;
-    }
+        const resSiswa = await callAPI('getData', { sheetName: 'Siswa' });
+        if (resSiswa.success) {
+            dataSiswa = resSiswa.data;
+            updateSiswaSelect();
+        }
 
-    const resGuru = await callAPI('getData', { sheetName: 'Guru' });
-    if (resGuru.success) {
-        dataGuru = resGuru.data;
-    }
+        const resLayanan = await callAPI('getData', { sheetName: 'LayananBK' });
+        if (resLayanan.success) {
+            dataLayanan = resLayanan.data;
+        }
 
-    const resWali = await callAPI('getData', { sheetName: 'WaliKelas' });
-    if (resWali.success) {
-        dataWali = resWali.data;
-    }
+        const resGuru = await callAPI('getData', { sheetName: 'Guru' });
+        if (resGuru.success) {
+            dataGuru = resGuru.data;
+        }
 
-    const resDCM = await callAPI('getData', { sheetName: 'DCM' });
-    if (resDCM.success) {
-        dataDCM = resDCM.data;
-    }
+        const resWali = await callAPI('getData', { sheetName: 'WaliKelas' });
+        if (resWali.success) {
+            dataWali = resWali.data;
+        }
 
-    const resPotensi = await callAPI('getData', { sheetName: 'Potensi' });
-    if (resPotensi.success) {
-        dataPotensi = resPotensi.data;
-    }
+        const resDCM = await callAPI('getData', { sheetName: 'DCM' });
+        if (resDCM.success) {
+            dataDCM = resDCM.data;
+        }
 
-    const resMinat = await callAPI('getData', { sheetName: 'MinatBakat' });
-    if (resMinat.success) {
-        dataMinat = resMinat.data;
-    }
+        const resPotensi = await callAPI('getData', { sheetName: 'Potensi' });
+        if (resPotensi.success) {
+            dataPotensi = resPotensi.data;
+        }
 
-    const resGaya = await callAPI('getData', { sheetName: 'GayaBelajar' });
-    if (resGaya.success) {
-        dataGayaBelajar = resGaya.data;
-    }
+        const resMinat = await callAPI('getData', { sheetName: 'MinatBakat' });
+        if (resMinat.success) {
+            dataMinat = resMinat.data;
+        }
 
-    const resJawaban = await callAPI('getData', { sheetName: 'JawabanInstrumen' });
-    if (resJawaban.success) {
-        dataJawaban = resJawaban.data;
-    }
+        const resGaya = await callAPI('getData', { sheetName: 'GayaBelajar' });
+        if (resGaya.success) {
+            dataGayaBelajar = resGaya.data;
+        }
 
-    const resPertanyaan = await callAPI('getData', { sheetName: 'PertanyaanInstrumen' });
-    if (resPertanyaan.success) {
-        dataPertanyaan = resPertanyaan.data;
-    }
+        const resJawaban = await callAPI('getData', { sheetName: 'JawabanInstrumen' });
+        if (resJawaban.success) {
+            dataJawaban = resJawaban.data;
+        }
 
-    updateDashboardCounts();
+        const resPertanyaan = await callAPI('getData', { sheetName: 'PertanyaanInstrumen' });
+        if (resPertanyaan.success) {
+            dataPertanyaan = resPertanyaan.data;
+        }
+
+        updateDashboardCounts();
+    } finally {
+        isRefreshing = false;
+    }
 }
 
 function updateUIFromSettings() {
