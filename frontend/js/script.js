@@ -8,6 +8,10 @@ let dataSiswa = [];
 let dataLayanan = [];
 let dataGuru = [];
 let dataWali = [];
+let dataDCM = [];
+let dataPotensi = [];
+let dataMinat = [];
+let dataGayaBelajar = [];
 let appSettings = {};
 
 // Initialize
@@ -30,6 +34,12 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Form Wali
     document.getElementById('form-wali').addEventListener('submit', (e) => handleSaveGeneric(e, 'WaliKelas', 'modalWali', 'form-wali', ['Nama', 'Kelas'], ['wali-nama', 'wali-kelas']));
+
+    // Form Instrumen
+    document.getElementById('form-dcm').addEventListener('submit', (e) => handleSaveGeneric(e, 'DCM', 'modalDCM', 'form-dcm', ['Tanggal', 'Siswa', 'Hasil/Keterangan'], ['dcm-tanggal', 'dcm-siswa', 'dcm-hasil']));
+    document.getElementById('form-potensi').addEventListener('submit', (e) => handleSaveGeneric(e, 'Potensi', 'modalPotensi', 'form-potensi', ['Tanggal', 'Siswa', 'Potensi Diri'], ['potensi-tanggal', 'potensi-siswa', 'potensi-diri']));
+    document.getElementById('form-minat').addEventListener('submit', (e) => handleSaveGeneric(e, 'MinatBakat', 'modalMinat', 'form-minat', ['Tanggal', 'Siswa', 'Minat', 'Bakat'], ['minat-tanggal', 'minat-siswa', 'minat-bidang', 'bakat-bidang']));
+    document.getElementById('form-gaya-belajar').addEventListener('submit', (e) => handleSaveGeneric(e, 'GayaBelajar', 'modalGayaBelajar', 'form-gaya-belajar', ['Tanggal', 'Siswa', 'Tipe Gaya Belajar'], ['gaya-belajar-tanggal', 'gaya-belajar-siswa', 'gaya-belajar-tipe']));
 
     // Form Pengaturan
     document.getElementById('form-pengaturan').addEventListener('submit', handleSaveSettings);
@@ -100,6 +110,14 @@ function showSection(sectionId, type = '') {
         renderTableGuru();
     } else if (sectionId === 'data-wali-kelas') {
         renderTableWali();
+    } else if (sectionId === 'instrumen-dcm') {
+        renderTableDCM();
+    } else if (sectionId === 'instrumen-potensi') {
+        renderTablePotensi();
+    } else if (sectionId === 'instrumen-minat') {
+        renderTableMinat();
+    } else if (sectionId === 'instrumen-gaya-belajar') {
+        renderTableGayaBelajar();
     } else if (sectionId === 'pengaturan') {
         loadSettingsToForm();
     } else if (sectionId === 'dashboard') {
@@ -136,6 +154,10 @@ function handleMockAPI(action, payload) {
             LayananBK: JSON.parse(localStorage.getItem('mockLayanan') || '[]'),
             Guru: JSON.parse(localStorage.getItem('mockGuru') || '[]'),
             WaliKelas: JSON.parse(localStorage.getItem('mockWaliKelas') || '[]'),
+            DCM: JSON.parse(localStorage.getItem('mockDCM') || '[]'),
+            Potensi: JSON.parse(localStorage.getItem('mockPotensi') || '[]'),
+            MinatBakat: JSON.parse(localStorage.getItem('mockMinatBakat') || '[]'),
+            GayaBelajar: JSON.parse(localStorage.getItem('mockGayaBelajar') || '[]'),
             Settings: JSON.parse(localStorage.getItem('mockSettings') || '{"AdminPass": "Lajoroni234", "SchoolName": "Layanan BK Sekolah"}')
         };
     }
@@ -183,6 +205,26 @@ async function refreshData() {
     const resWali = await callAPI('getData', { sheetName: 'WaliKelas' });
     if (resWali.success) {
         dataWali = resWali.data;
+    }
+
+    const resDCM = await callAPI('getData', { sheetName: 'DCM' });
+    if (resDCM.success) {
+        dataDCM = resDCM.data;
+    }
+
+    const resPotensi = await callAPI('getData', { sheetName: 'Potensi' });
+    if (resPotensi.success) {
+        dataPotensi = resPotensi.data;
+    }
+
+    const resMinat = await callAPI('getData', { sheetName: 'MinatBakat' });
+    if (resMinat.success) {
+        dataMinat = resMinat.data;
+    }
+
+    const resGaya = await callAPI('getData', { sheetName: 'GayaBelajar' });
+    if (resGaya.success) {
+        dataGayaBelajar = resGaya.data;
     }
 
     const resSettings = await callAPI('getSettings', {});
@@ -310,6 +352,75 @@ function renderTableWali() {
     });
 }
 
+function renderTableDCM() {
+    const tbody = document.getElementById('table-dcm-body');
+    tbody.innerHTML = '';
+    dataDCM.forEach(item => {
+        tbody.innerHTML += `
+            <tr>
+                <td>${item.Tanggal}</td>
+                <td>${item.Siswa}</td>
+                <td>${item['Hasil/Keterangan']}</td>
+                <td>
+                    <button class="btn btn-sm btn-danger" onclick="deleteItem('DCM', '${item.ID}')">Hapus</button>
+                </td>
+            </tr>
+        `;
+    });
+}
+
+function renderTablePotensi() {
+    const tbody = document.getElementById('table-potensi-body');
+    tbody.innerHTML = '';
+    dataPotensi.forEach(item => {
+        tbody.innerHTML += `
+            <tr>
+                <td>${item.Tanggal}</td>
+                <td>${item.Siswa}</td>
+                <td>${item['Potensi Diri']}</td>
+                <td>
+                    <button class="btn btn-sm btn-danger" onclick="deleteItem('Potensi', '${item.ID}')">Hapus</button>
+                </td>
+            </tr>
+        `;
+    });
+}
+
+function renderTableMinat() {
+    const tbody = document.getElementById('table-minat-body');
+    tbody.innerHTML = '';
+    dataMinat.forEach(item => {
+        tbody.innerHTML += `
+            <tr>
+                <td>${item.Tanggal}</td>
+                <td>${item.Siswa}</td>
+                <td>${item.Minat}</td>
+                <td>${item.Bakat}</td>
+                <td>
+                    <button class="btn btn-sm btn-danger" onclick="deleteItem('MinatBakat', '${item.ID}')">Hapus</button>
+                </td>
+            </tr>
+        `;
+    });
+}
+
+function renderTableGayaBelajar() {
+    const tbody = document.getElementById('table-gaya-belajar-body');
+    tbody.innerHTML = '';
+    dataGayaBelajar.forEach(item => {
+        tbody.innerHTML += `
+            <tr>
+                <td>${item.Tanggal}</td>
+                <td>${item.Siswa}</td>
+                <td>${item['Tipe Gaya Belajar']}</td>
+                <td>
+                    <button class="btn btn-sm btn-danger" onclick="deleteItem('GayaBelajar', '${item.ID}')">Hapus</button>
+                </td>
+            </tr>
+        `;
+    });
+}
+
 function renderTableLayanan() {
     const tbody = document.getElementById('table-layanan-body');
     tbody.innerHTML = '';
@@ -352,10 +463,14 @@ function updateDashboardCounts() {
 }
 
 function updateSiswaSelect() {
-    const select = document.getElementById('layanan-siswa');
-    select.innerHTML = '<option value="">Pilih Siswa...</option>';
-    dataSiswa.forEach(s => {
-        select.innerHTML += `<option value="${s.Nama}">${s.Nama} (${s.Kelas})</option>`;
+    const selects = document.querySelectorAll('.select-siswa, #layanan-siswa');
+    selects.forEach(select => {
+        const currentVal = select.value;
+        select.innerHTML = '<option value="">Pilih Siswa...</option>';
+        dataSiswa.forEach(s => {
+            select.innerHTML += `<option value="${s.Nama}">${s.Nama} (${s.Kelas})</option>`;
+        });
+        select.value = currentVal;
     });
 }
 
@@ -423,6 +538,10 @@ async function deleteItem(sheetName, id) {
             if (sheetName === 'Siswa') renderTableSiswa();
             else if (sheetName === 'Guru') renderTableGuru();
             else if (sheetName === 'WaliKelas') renderTableWali();
+            else if (sheetName === 'DCM') renderTableDCM();
+            else if (sheetName === 'Potensi') renderTablePotensi();
+            else if (sheetName === 'MinatBakat') renderTableMinat();
+            else if (sheetName === 'GayaBelajar') renderTableGayaBelajar();
             else renderTableLayanan();
         }
     }
@@ -442,7 +561,11 @@ async function handleSaveGeneric(e, sheetName, modalId, formId, fields, inputIds
         document.getElementById(formId).reset();
         await refreshData();
         if (sheetName === 'Guru') renderTableGuru();
-        if (sheetName === 'WaliKelas') renderTableWali();
+        else if (sheetName === 'WaliKelas') renderTableWali();
+        else if (sheetName === 'DCM') renderTableDCM();
+        else if (sheetName === 'Potensi') renderTablePotensi();
+        else if (sheetName === 'MinatBakat') renderTableMinat();
+        else if (sheetName === 'GayaBelajar') renderTableGayaBelajar();
     }
 }
 
@@ -461,4 +584,20 @@ function openModalGuru() {
 
 function openModalWali() {
     new bootstrap.Modal(document.getElementById('modalWali')).show();
+}
+
+function openModalDCM() {
+    new bootstrap.Modal(document.getElementById('modalDCM')).show();
+}
+
+function openModalPotensi() {
+    new bootstrap.Modal(document.getElementById('modalPotensi')).show();
+}
+
+function openModalMinat() {
+    new bootstrap.Modal(document.getElementById('modalMinat')).show();
+}
+
+function openModalGayaBelajar() {
+    new bootstrap.Modal(document.getElementById('modalGayaBelajar')).show();
 }
