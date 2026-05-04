@@ -106,18 +106,104 @@
                 </div>
                 <div class="row mt-4">
                     <div class="col-md-3">
-                        <div class="card bg-info text-white mb-4">
+                        <div class="card bg-info text-white mb-4 shadow-sm" style="cursor: pointer;"
+                            onclick="showSection('data-siswa')">
                             <div class="card-body">
-                                <h5>Total Siswa</h5>
-                                <h2 id="count-siswa">0</h2>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h5>Total Siswa</h5>
+                                        <h2 id="count-siswa">0</h2>
+                                    </div>
+                                    <i class="fas fa-users fa-3x opacity-50"></i>
+                                </div>
                             </div>
                         </div>
                     </div>
                     <div class="col-md-3">
-                        <div class="card bg-success text-white mb-4">
+                        <div class="card bg-success text-white mb-4 shadow-sm" style="cursor: pointer;"
+                            onclick="showSection('layanan-bk', 'Semua')">
                             <div class="card-body">
-                                <h5>Layanan Selesai</h5>
-                                <h2 id="count-layanan">0</h2>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h5>Layanan Selesai</h5>
+                                        <h2 id="count-layanan">0</h2>
+                                    </div>
+                                    <i class="fas fa-check-circle fa-3x opacity-50"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <h4 class="mt-4 mb-3">Jenis Layanan</h4>
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="card bg-primary text-white mb-4 shadow-sm" style="cursor: pointer;"
+                            onclick="showSection('layanan-bk', 'Bimbingan Belajar')">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h5>Bimbingan Belajar</h5>
+                                        <h2 id="count-belajar">0</h2>
+                                    </div>
+                                    <i class="fas fa-book-reader fa-3x opacity-50"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card bg-warning text-dark mb-4 shadow-sm" style="cursor: pointer;"
+                            onclick="showSection('layanan-bk', 'Bimbingan Sosial')">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h5>Bimbingan Sosial</h5>
+                                        <h2 id="count-sosial">0</h2>
+                                    </div>
+                                    <i class="fas fa-users-cog fa-3x opacity-50"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card bg-danger text-white mb-4 shadow-sm" style="cursor: pointer;"
+                            onclick="showSection('layanan-bk', 'Bimbingan Karier')">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h5>Bimbingan Karier</h5>
+                                        <h2 id="count-karier">0</h2>
+                                    </div>
+                                    <i class="fas fa-briefcase fa-3x opacity-50"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card bg-secondary text-white mb-4 shadow-sm" style="cursor: pointer;"
+                            onclick="showSection('layanan-bk', 'Konseling Individu')">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h5>Konseling Individu</h5>
+                                        <h2 id="count-individu">0</h2>
+                                    </div>
+                                    <i class="fas fa-user fa-3x opacity-50"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card bg-dark text-white mb-4 shadow-sm" style="cursor: pointer;"
+                            onclick="showSection('layanan-bk', 'Konseling Kelompok')">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h5>Konseling Kelompok</h5>
+                                        <h2 id="count-kelompok">0</h2>
+                                    </div>
+                                    <i class="fas fa-users fa-3x opacity-50"></i>
+                                </div>
                             </div>
                         </div>
                     </div>
