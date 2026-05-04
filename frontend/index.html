@@ -235,6 +235,15 @@
                                         <input type="text" id="setting-academic-year" class="form-control"
                                             placeholder="Contoh: 2023/2024">
                                     </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Kop Surat Sekolah (Gambar)</label>
+                                        <input type="file" id="setting-kop-file" class="form-control" accept="image/*"
+                                            onchange="previewKop(this)">
+                                        <div id="kop-preview-container" class="mt-2 d-none">
+                                            <img id="kop-preview-img" src="" alt="Kop Surat"
+                                                class="img-fluid border rounded" style="max-height: 150px;">
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
