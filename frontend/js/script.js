@@ -31,10 +31,24 @@ document.addEventListener('DOMContentLoaded', () => {
     refreshData();
 
     const events = [
-        ['login-form', handleLogin], ['form-siswa', (e) => handleSaveGeneric(e, 'Siswa', 'modalSiswa', 'form-siswa', ['NISN', 'Nama', 'Tempat Lahir', 'Tanggal Lahir', 'Jenis Kelamin', 'Agama', 'Nama Orang Tua', 'Kelas', 'Status'], ['siswa-nisn', 'siswa-nama', 'siswa-tempat', 'siswa-tanggal', 'siswa-jk', 'siswa-agama', 'siswa-ortu', 'siswa-kelas', 'siswa-status'], 'siswa-id')],
-        ['form-layanan', (e) => handleSaveGeneric(e, 'LayananBK', 'modalLayanan', 'form-layanan', ['Tanggal', 'Jenis Layanan', 'Siswa', 'Keterangan'], ['layanan-tanggal', 'layanan-jenis', 'layanan-siswa', 'layanan-keterangan'], 'layanan-id')],
+        ['login-form', handleLogin], ['form-siswa', (e) => handleSaveGeneric(e, 'Siswa', 'modalSiswa', 'form-siswa', ['NISN', 'Nama', 'Tempat Lahir', 'Tanggal Lahir', 'Jenis Kelamin', 'Agama', 'Nama Orang Tua', 'Kelas', 'Status'], ['siswa-nisn', 'siswa-nama', 'siswa-tempat-lahir', 'siswa-tanggal-lahir', 'siswa-jk', 'siswa-agama', 'siswa-ortu', 'siswa-kelas', 'siswa-status'], 'siswa-id')],
+        ['form-layanan', (e) => {
+            e.preventDefault();
+            const id = document.getElementById('layanan-id').value;
+            const rowData = {
+                'Tanggal': document.getElementById('layanan-tanggal').value,
+                'Siswa': document.getElementById('layanan-siswa').value,
+                'Keterangan': document.getElementById('layanan-keterangan').value,
+                'Jenis Layanan': currentLayananType || 'Bimbingan Umum'
+            };
+            handleSaveGenericAction(id ? 'updateData' : 'addData', id ? { sheetName: 'LayananBK', id, rowData } : { sheetName: 'LayananBK', rowData }, 'modalLayanan', 'form-layanan');
+        }],
         ['form-guru', (e) => handleSaveGeneric(e, 'Guru', 'modalGuru', 'form-guru', ['Nama', 'NIP', 'Mata Pelajaran'], ['guru-nama', 'guru-nip', 'guru-mapel'], 'guru-id')],
         ['form-wali', (e) => handleSaveGeneric(e, 'WaliKelas', 'modalWali', 'form-wali', ['Nama', 'Kelas'], ['wali-nama', 'wali-kelas'], 'wali-id')],
+        ['form-dcm', (e) => handleSaveGeneric(e, 'DCM', 'modalDCM', 'form-dcm', ['Tanggal', 'Siswa', 'Hasil/Keterangan'], ['dcm-tanggal', 'dcm-siswa', 'dcm-hasil'], 'dcm-id')],
+        ['form-potensi', (e) => handleSaveGeneric(e, 'Potensi', 'modalPotensi', 'form-potensi', ['Tanggal', 'Siswa', 'Potensi Diri'], ['potensi-tanggal', 'potensi-siswa', 'potensi-diri'], 'potensi-id')],
+        ['form-minat', (e) => handleSaveGeneric(e, 'MinatBakat', 'modalMinat', 'form-minat', ['Tanggal', 'Siswa', 'Minat', 'Bakat'], ['minat-tanggal', 'minat-siswa', 'minat-bidang', 'bakat-bidang'], 'minat-id')],
+        ['form-gaya-belajar', (e) => handleSaveGeneric(e, 'GayaBelajar', 'modalGayaBelajar', 'form-gaya-belajar', ['Tanggal', 'Siswa', 'Tipe Gaya Belajar'], ['gaya-belajar-tanggal', 'gaya-belajar-siswa', 'gaya-belajar-tipe'], 'gaya-belajar-id')],
         ['form-isi-instrumen', handleSaveJawaban], ['form-pertanyaan', handleSavePertanyaan], ['form-pengaturan', handleSaveSettings]
     ];
     events.forEach(([id, handler]) => document.getElementById(id)?.addEventListener('submit', handler));
@@ -123,8 +137,18 @@ function renderTable(name, data) {
 async function handleSaveGeneric(e, sheet, modalId, formId, fields, inputIds, idField) {
     e.preventDefault();
     const id = document.getElementById(idField).value, rowData = fields.reduce((obj, f, i) => ({ ...obj, [f]: document.getElementById(inputIds[i]).value }), {});
-    const res = await callAPI(id ? 'updateData' : 'addData', id ? { sheetName: sheet, id, rowData } : { sheetName: sheet, rowData });
-    if (res.success) { bootstrap.Modal.getInstance(document.getElementById(modalId)).hide(); document.getElementById(formId).reset(); await refreshData(); }
+    await handleSaveGenericAction(id ? 'updateData' : 'addData', id ? { sheetName: sheet, id, rowData } : { sheetName: sheet, rowData }, modalId, formId);
+}
+
+async function handleSaveGenericAction(action, payload, modalId, formId) {
+    const res = await callAPI(action, payload);
+    if (res.success) {
+        const modal = document.getElementById(modalId);
+        if (modal) bootstrap.Modal.getInstance(modal).hide();
+        const form = document.getElementById(formId);
+        if (form) form.reset();
+        await refreshData();
+    }
 }
 
 // Instrumen & Analytics
@@ -182,14 +206,28 @@ async function handleSaveSettings(e) {
     if (res.success) { alert('Tersimpan!'); refreshData(); }
 }
 
+async function openModalSiswa() { document.getElementById('form-siswa').reset(); document.getElementById('siswa-id').value = ''; new bootstrap.Modal(document.getElementById('modalSiswa')).show(); }
+async function openModalGuru() { document.getElementById('form-guru').reset(); document.getElementById('guru-id').value = ''; new bootstrap.Modal(document.getElementById('modalGuru')).show(); }
+async function openModalWali() { document.getElementById('form-wali').reset(); document.getElementById('wali-id').value = ''; new bootstrap.Modal(document.getElementById('modalWali')).show(); }
+async function openModalLayanan() { document.getElementById('form-layanan').reset(); document.getElementById('layanan-id').value = ''; new bootstrap.Modal(document.getElementById('modalLayanan')).show(); }
+async function openModalDCM() { document.getElementById('form-dcm').reset(); document.getElementById('dcm-id').value = ''; new bootstrap.Modal(document.getElementById('modalDCM')).show(); }
+async function openModalPotensi() { document.getElementById('form-potensi').reset(); document.getElementById('potensi-id').value = ''; new bootstrap.Modal(document.getElementById('modalPotensi')).show(); }
+async function openModalMinat() { document.getElementById('form-minat').reset(); document.getElementById('minat-id').value = ''; new bootstrap.Modal(document.getElementById('modalMinat')).show(); }
+async function openModalGayaBelajar() { document.getElementById('form-gaya-belajar').reset(); document.getElementById('gaya-belajar-id').value = ''; new bootstrap.Modal(document.getElementById('modalGayaBelajar')).show(); }
+
 async function editItem(sheet, id) {
     const data = { Siswa: dataSiswa, Guru: dataGuru, WaliKelas: dataWali, LayananBK: dataLayanan, DCM: dataDCM, Potensi: dataPotensi, MinatBakat: dataMinat, GayaBelajar: dataGayaBelajar, PertanyaanInstrumen: dataPertanyaan }[sheet];
     const item = data.find(i => i.ID === id); if (!item) return;
     const config = {
-        Siswa: { modal: 'modalSiswa', fields: ['siswa-id', 'siswa-nisn', 'siswa-nama', 'siswa-tempat', 'siswa-tanggal', 'siswa-jk', 'siswa-agama', 'siswa-ortu', 'siswa-kelas', 'siswa-status'], keys: ['ID', 'NISN', 'Nama', 'Tempat Lahir', 'Tanggal Lahir', 'Jenis Kelamin', 'Agama', 'Nama Orang Tua', 'Kelas', 'Status'] },
+        Siswa: { modal: 'modalSiswa', fields: ['siswa-id', 'siswa-nisn', 'siswa-nama', 'siswa-tempat-lahir', 'siswa-tanggal-lahir', 'siswa-jk', 'siswa-agama', 'siswa-ortu', 'siswa-kelas', 'siswa-status'], keys: ['ID', 'NISN', 'Nama', 'Tempat Lahir', 'Tanggal Lahir', 'Jenis Kelamin', 'Agama', 'Nama Orang Tua', 'Kelas', 'Status'] },
         Guru: { modal: 'modalGuru', fields: ['guru-id', 'guru-nama', 'guru-nip', 'guru-mapel'], keys: ['ID', 'Nama', 'NIP', 'Mata Pelajaran'] },
         WaliKelas: { modal: 'modalWali', fields: ['wali-id', 'wali-nama', 'wali-kelas'], keys: ['ID', 'Nama', 'Kelas'] },
-        LayananBK: { modal: 'modalLayanan', fields: ['layanan-id', 'layanan-tanggal', 'layanan-jenis', 'layanan-siswa', 'layanan-keterangan'], keys: ['ID', 'Tanggal', 'Jenis Layanan', 'Siswa', 'Keterangan'] }
+        LayananBK: { modal: 'modalLayanan', fields: ['layanan-id', 'layanan-tanggal', 'layanan-jenis', 'layanan-siswa', 'layanan-keterangan'], keys: ['ID', 'Tanggal', 'Jenis Layanan', 'Siswa', 'Keterangan'] },
+        DCM: { modal: 'modalDCM', fields: ['dcm-id', 'dcm-tanggal', 'dcm-siswa', 'dcm-hasil'], keys: ['ID', 'Tanggal', 'Siswa', 'Hasil/Keterangan'] },
+        Potensi: { modal: 'modalPotensi', fields: ['potensi-id', 'potensi-tanggal', 'potensi-siswa', 'potensi-diri'], keys: ['ID', 'Tanggal', 'Siswa', 'Potensi Diri'] },
+        MinatBakat: { modal: 'modalMinat', fields: ['minat-id', 'minat-tanggal', 'minat-siswa', 'minat-bidang', 'bakat-bidang'], keys: ['ID', 'Tanggal', 'Siswa', 'Minat', 'Bakat'] },
+        GayaBelajar: { modal: 'modalGayaBelajar', fields: ['gaya-belajar-id', 'gaya-belajar-tanggal', 'gaya-belajar-siswa', 'gaya-belajar-tipe'], keys: ['ID', 'Tanggal', 'Siswa', 'Tipe Gaya Belajar'] },
+        PertanyaanInstrumen: { modal: 'modalPertanyaan', fields: ['pertanyaan-id', 'pertanyaan-instrumen', 'pertanyaan-teks', 'pertanyaan-kategori'], keys: ['ID', 'Instrumen', 'Pertanyaan', 'Kategori'] }
     }[sheet];
     if (config) { config.fields.forEach((f, i) => document.getElementById(f).value = item[config.keys[i]]); new bootstrap.Modal(document.getElementById(config.modal)).show(); }
 }
