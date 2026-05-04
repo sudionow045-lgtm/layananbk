@@ -49,14 +49,15 @@ function handleLogin(e) {
     const username = document.getElementById('username').value;
     const password = document.getElementById('password').value;
 
-    // Use password from settings if available, otherwise fallback to default
-    const adminPass = appSettings.AdminPass || 'Lajoroni234';
+    // Pastikan appSettings tidak undefined
+    const settings = appSettings || {};
+    const adminPass = settings.AdminPass || 'Lajoroni234';
 
     if (username === 'admin' && password === adminPass) {
         sessionStorage.setItem('isLoggedIn', 'true');
         showApp();
     } else {
-        alert('Login Gagal! Cek username dan password.');
+        alert('Login Gagal! Username: admin, Password default: Lajoroni234 (atau cek pengaturan)');
     }
 }
 
@@ -132,15 +133,25 @@ function handleMockAPI(action, payload) {
     if (!window.mockDb) {
         window.mockDb = {
             Siswa: JSON.parse(localStorage.getItem('mockSiswa') || '[]'),
-            LayananBK: JSON.parse(localStorage.getItem('mockLayanan') || '[]')
+            LayananBK: JSON.parse(localStorage.getItem('mockLayanan') || '[]'),
+            Guru: JSON.parse(localStorage.getItem('mockGuru') || '[]'),
+            WaliKelas: JSON.parse(localStorage.getItem('mockWaliKelas') || '[]'),
+            Settings: JSON.parse(localStorage.getItem('mockSettings') || '{"AdminPass": "Lajoroni234", "SchoolName": "Layanan BK Sekolah"}')
         };
     }
 
     switch (action) {
         case 'getData':
-            return { success: true, data: window.mockDb[payload.sheetName] };
+            return { success: true, data: window.mockDb[payload.sheetName] || [] };
+        case 'getSettings':
+            return { success: true, data: window.mockDb.Settings };
+        case 'updateSettings':
+            window.mockDb.Settings = { ...window.mockDb.Settings, ...payload.settings };
+            localStorage.setItem('mockSettings', JSON.stringify(window.mockDb.Settings));
+            return { success: true };
         case 'addData':
             const newData = { ...payload.rowData, ID: Date.now().toString() };
+            if (!window.mockDb[payload.sheetName]) window.mockDb[payload.sheetName] = [];
             window.mockDb[payload.sheetName].push(newData);
             localStorage.setItem('mock' + payload.sheetName, JSON.stringify(window.mockDb[payload.sheetName]));
             return { success: true };
@@ -148,7 +159,7 @@ function handleMockAPI(action, payload) {
             alert(`MENSIMULASIKAN WA ke ${payload.phone}: ${payload.message}`);
             return { success: true };
         default:
-            return { success: true };
+            return { success: true, data: [] };
     }
 }
 
