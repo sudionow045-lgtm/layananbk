@@ -205,6 +205,27 @@ function loadSettingsToForm() {
     document.getElementById('setting-academic-year').value = appSettings.AcademicYear || '';
     document.getElementById('setting-wa-token').value = appSettings.WAToken || '';
     document.getElementById('setting-admin-pass').value = ''; // Password always empty for security
+    
+    // Preview Kop Surat if exists
+    if (appSettings.KopSurat) {
+        const preview = document.getElementById('kop-preview-img');
+        const container = document.getElementById('kop-preview-container');
+        preview.src = appSettings.KopSurat;
+        container.classList.remove('d-none');
+    }
+}
+
+function previewKop(input) {
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const preview = document.getElementById('kop-preview-img');
+            const container = document.getElementById('kop-preview-container');
+            preview.src = e.target.result;
+            container.classList.remove('d-none');
+        }
+        reader.readAsDataURL(input.files[0]);
+    }
 }
 
 async function handleSaveSettings(e) {
@@ -214,6 +235,12 @@ async function handleSaveSettings(e) {
         AcademicYear: document.getElementById('setting-academic-year').value,
         WAToken: document.getElementById('setting-wa-token').value
     };
+
+    // Handle Kop Surat Image
+    const kopImg = document.getElementById('kop-preview-img').src;
+    if (kopImg && kopImg.startsWith('data:image')) {
+        newSettings.KopSurat = kopImg;
+    }
 
     const newPass = document.getElementById('setting-admin-pass').value;
     if (newPass) {
