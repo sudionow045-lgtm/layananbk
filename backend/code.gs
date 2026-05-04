@@ -34,6 +34,10 @@ function doPost(e) {
         return createResponse({ success: true, data: deleteData(payload.sheetName, payload.id) });
       case 'sendWA':
         return createResponse(sendWhatsAppNotification(payload.phone, payload.message));
+      case 'getSettings':
+        return createResponse({ success: true, data: getSettings() });
+      case 'updateSettings':
+        return createResponse({ success: true, data: updateSettings(payload.settings) });
       default:
         return createResponse({ success: false, message: 'Aksi tidak dikenal' });
     }
@@ -51,7 +55,7 @@ function doGet(e) {
  * Jalankan fungsi ini sekali dari editor Apps Script untuk membuat semua sheet dan header.
  */
 function setup() {
-  const sheetNames = ['Siswa', 'Guru', 'WaliKelas', 'LayananBK'];
+  const sheetNames = ['Siswa', 'Guru', 'WaliKelas', 'LayananBK', 'Settings'];
   sheetNames.forEach(name => {
     getSheet(name);
   });
@@ -84,8 +88,43 @@ function getSheet(name) {
     if (name === 'Guru') sheet.appendRow(['ID', 'Nama', 'NIP', 'Mata Pelajaran']);
     if (name === 'WaliKelas') sheet.appendRow(['ID', 'Nama', 'Kelas']);
     if (name === 'LayananBK') sheet.appendRow(['ID', 'Tanggal', 'Jenis Layanan', 'Siswa', 'Keterangan']);
+    if (name === 'Settings') {
+      sheet.appendRow(['Key', 'Value']);
+      sheet.appendRow(['SchoolName', 'Nama Sekolah Anda']);
+      sheet.appendRow(['WAToken', 'YOUR_FONNTE_TOKEN']);
+      sheet.appendRow(['AdminPass', 'Lajoroni234']);
+    }
   }
   return sheet;
+}
+
+function getSettings() {
+  const sheet = getSheet('Settings');
+  const values = sheet.getDataRange().getValues();
+  const settings = {};
+  for (let i = 1; i < values.length; i++) {
+    settings[values[i][0]] = values[i][1];
+  }
+  return settings;
+}
+
+function updateSettings(newSettings) {
+  const sheet = getSheet('Settings');
+  const values = sheet.getDataRange().getValues();
+  for (const key in newSettings) {
+    let found = false;
+    for (let i = 1; i < values.length; i++) {
+      if (values[i][0] === key) {
+        sheet.getRange(i + 1, 2).setValue(newSettings[key]);
+        found = true;
+        break;
+      }
+    }
+    if (!found) {
+      sheet.appendRow([key, newSettings[key]]);
+    }
+  }
+  return { message: 'Pengaturan diperbarui' };
 }
 
 function getAllData(sheetName) {
@@ -143,11 +182,10 @@ function deleteData(sheetName, id) {
 }
 
 function sendWhatsAppNotification(phone, message) {
-  // Contoh integrasi dengan API Fonnte (memerlukan Token)
-  // Anda bisa mengganti ini dengan provider WA Gateway pilihan Anda
-  const token = 'YOUR_FONNTE_TOKEN'; 
+  const settings = getSettings();
+  const token = settings.WAToken || 'YOUR_FONNTE_TOKEN'; 
   
-  if (token === 'YOUR_FONNTE_TOKEN') {
+  if (token === 'YOUR_FONNTE_TOKEN' || token === '') {
     return { success: true, message: 'Simulasi: Notifikasi WA terkirim ke ' + phone };
   }
 
