@@ -153,9 +153,14 @@
                     <table class="table table-striped">
                         <thead>
                             <tr>
+                                <th>NISN</th>
                                 <th>Nama</th>
+                                <th>TTL</th>
+                                <th>JK</th>
+                                <th>Agama</th>
+                                <th>Ortu</th>
                                 <th>Kelas</th>
-                                <th>No WA Ortu</th>
+                                <th>Status</th>
                                 <th>Aksi</th>
                             </tr>
                         </thead>
@@ -306,13 +311,64 @@
                 <div class="modal-body">
                     <form id="form-siswa">
                         <input type="hidden" id="siswa-id">
-                        <div class="mb-3">
-                            <label class="form-label">Nama Lengkap</label>
-                            <input type="text" id="siswa-nama" class="form-control" required>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">NISN</label>
+                                <input type="text" id="siswa-nisn" class="form-control" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Nama Lengkap</label>
+                                <input type="text" id="siswa-nama" class="form-control" required>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Tempat Lahir</label>
+                                <input type="text" id="siswa-tempat-lahir" class="form-control" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Tanggal Lahir</label>
+                                <input type="date" id="siswa-tanggal-lahir" class="form-control" required>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Jenis Kelamin</label>
+                                <select id="siswa-jk" class="form-select" required>
+                                    <option value="Laki-laki">Laki-laki</option>
+                                    <option value="Perempuan">Perempuan</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Agama</label>
+                                <select id="siswa-agama" class="form-select" required>
+                                    <option value="Islam">Islam</option>
+                                    <option value="Kristen">Kristen</option>
+                                    <option value="Katolik">Katolik</option>
+                                    <option value="Hindu">Hindu</option>
+                                    <option value="Budha">Budha</option>
+                                    <option value="Khonghucu">Khonghucu</option>
+                                </select>
+                            </div>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">Kelas</label>
-                            <input type="text" id="siswa-kelas" class="form-control" required>
+                            <label class="form-label">Nama Orang Tua</label>
+                            <input type="text" id="siswa-ortu" class="form-control" required>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Kelas</label>
+                                <input type="text" id="siswa-kelas" class="form-control" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Status</label>
+                                <select id="siswa-status" class="form-select" required>
+                                    <option value="Aktif">Aktif</option>
+                                    <option value="Lulus">Lulus</option>
+                                    <option value="Pindah">Pindah</option>
+                                    <option value="Keluar">Keluar</option>
+                                </select>
+                            </div>
                         </div>
                         <div class="mb-3">
                             <label class="form-label">No WA Orang Tua (Contoh: 628123456789)</label>
