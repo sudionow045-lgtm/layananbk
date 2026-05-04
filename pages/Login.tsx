@@ -20,7 +20,7 @@ const Login: React.FC = () => {
       const defaultPass = 'Lajoroni234';
       if (username.toLowerCase() === 'admin' && password === defaultPass) {
         alert('Login Admin Berhasil!');
-        sessionStorage.setItem('userRole', 'admin');
+        localStorage.setItem('userRole', 'admin');
         window.location.href = '#dashboard'; // Mock routing
       } else {
         setError(username.toLowerCase() !== 'admin' ? 'Username harus "admin"' : 'Password Admin salah.');
@@ -29,8 +29,8 @@ const Login: React.FC = () => {
       // Siswa login logic (mock)
       if (nisn && password === nisn) {
         alert('Login Siswa Berhasil!');
-        sessionStorage.setItem('userRole', 'siswa');
-        sessionStorage.setItem('currentUser', JSON.stringify({ Nama: 'Siswa Demo', NISN: nisn }));
+        localStorage.setItem('userRole', 'siswa');
+        localStorage.setItem('currentUser', JSON.stringify({ Nama: 'Siswa Demo', NISN: nisn }));
         window.location.href = '#siswa-dashboard';
       } else {
         setError('NISN atau Password salah. Gunakan NISN sebagai password.');
