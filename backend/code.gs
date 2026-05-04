@@ -94,7 +94,7 @@ function getSheet(name) {
     if (name === 'PertanyaanInstrumen') sheet.appendRow(['ID', 'Instrumen', 'Pertanyaan', 'Kategori']);
     if (name === 'Settings') {
       sheet.appendRow(['Key', 'Value']);
-      sheet.appendRow(['SchoolName', 'Nama Sekolah Anda']);
+      sheet.appendRow(['SchoolName', 'SMP NEGERI 4 FAKFAK']);
       sheet.appendRow(['AdminPass', 'Lajoroni234']);
     }
   }
