@@ -74,6 +74,20 @@
                         </li>
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" role="button"
+                                data-bs-toggle="dropdown">Instrumen BK</a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="#" onclick="showSection('instrumen-dcm')">Daftar Cek
+                                        Masalah</a></li>
+                                <li><a class="dropdown-item" href="#" onclick="showSection('instrumen-potensi')">Kenali
+                                        Potensi</a></li>
+                                <li><a class="dropdown-item" href="#" onclick="showSection('instrumen-minat')">Minat
+                                        Bakat</a></li>
+                                <li><a class="dropdown-item" href="#"
+                                        onclick="showSection('instrumen-gaya-belajar')">Gaya Belajar</a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button"
                                 data-bs-toggle="dropdown">Manajemen Data</a>
                             <ul class="dropdown-menu">
                                 <li><a class="dropdown-item" href="#" onclick="showSection('data-siswa')">Data Siswa</a>
@@ -275,6 +289,91 @@
                             </tr>
                         </thead>
                         <tbody id="table-wali-body"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Daftar Cek Masalah (DCM) Section -->
+            <section id="instrumen-dcm" class="content-section d-none">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h2>Daftar Cek Masalah (DCM)</h2>
+                    <button class="btn btn-primary" onclick="openModalDCM()">Tambah Data</button>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Tanggal</th>
+                                <th>Siswa</th>
+                                <th>Hasil/Keterangan</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="table-dcm-body"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Kenali Potensi Section -->
+            <section id="instrumen-potensi" class="content-section d-none">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h2>Kenali Potensi</h2>
+                    <button class="btn btn-primary" onclick="openModalPotensi()">Tambah Data</button>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Tanggal</th>
+                                <th>Siswa</th>
+                                <th>Potensi Diri</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="table-potensi-body"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Minat Bakat Section -->
+            <section id="instrumen-minat" class="content-section d-none">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h2>Minat Bakat</h2>
+                    <button class="btn btn-primary" onclick="openModalMinat()">Tambah Data</button>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Tanggal</th>
+                                <th>Siswa</th>
+                                <th>Minat</th>
+                                <th>Bakat</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="table-minat-body"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Gaya Belajar Section -->
+            <section id="instrumen-gaya-belajar" class="content-section d-none">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h2>Gaya Belajar</h2>
+                    <button class="btn btn-primary" onclick="openModalGayaBelajar()">Tambah Data</button>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Tanggal</th>
+                                <th>Siswa</th>
+                                <th>Tipe Gaya Belajar</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="table-gaya-belajar-body"></tbody>
                     </table>
                 </div>
             </section>
@@ -509,6 +608,132 @@
                         <div class="mb-3">
                             <label class="form-label">No WA Orang Tua (Contoh: 628123456789)</label>
                             <input type="text" id="siswa-wa" class="form-control" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Simpan</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal DCM -->
+    <div class="modal fade" id="modalDCM" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Data Daftar Cek Masalah (DCM)</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="form-dcm">
+                        <div class="mb-3">
+                            <label class="form-label">Tanggal</label>
+                            <input type="date" id="dcm-tanggal" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Pilih Siswa</label>
+                            <select id="dcm-siswa" class="form-select select-siswa" required></select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Hasil/Keterangan Masalah</label>
+                            <textarea id="dcm-hasil" class="form-control" rows="3" required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Simpan</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Potensi -->
+    <div class="modal fade" id="modalPotensi" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Data Kenali Potensi</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="form-potensi">
+                        <div class="mb-3">
+                            <label class="form-label">Tanggal</label>
+                            <input type="date" id="potensi-tanggal" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Pilih Siswa</label>
+                            <select id="potensi-siswa" class="form-select select-siswa" required></select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Potensi Diri yang Teridentifikasi</label>
+                            <textarea id="potensi-diri" class="form-control" rows="3" required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Simpan</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Minat Bakat -->
+    <div class="modal fade" id="modalMinat" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Data Minat Bakat</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="form-minat">
+                        <div class="mb-3">
+                            <label class="form-label">Tanggal</label>
+                            <input type="date" id="minat-tanggal" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Pilih Siswa</label>
+                            <select id="minat-siswa" class="form-select select-siswa" required></select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Minat</label>
+                            <input type="text" id="minat-bidang" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Bakat</label>
+                            <input type="text" id="bakat-bidang" class="form-control" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Simpan</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Gaya Belajar -->
+    <div class="modal fade" id="modalGayaBelajar" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Data Gaya Belajar</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="form-gaya-belajar">
+                        <div class="mb-3">
+                            <label class="form-label">Tanggal</label>
+                            <input type="date" id="gaya-belajar-tanggal" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Pilih Siswa</label>
+                            <select id="gaya-belajar-siswa" class="form-select select-siswa" required></select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Tipe Gaya Belajar</label>
+                            <select id="gaya-belajar-tipe" class="form-select" required>
+                                <option value="Visual">Visual</option>
+                                <option value="Auditori">Auditori</option>
+                                <option value="Kinestetik">Kinestetik</option>
+                                <option value="Visual-Auditori">Visual-Auditori</option>
+                                <option value="Campuran">Campuran</option>
+                            </select>
                         </div>
                         <button type="submit" class="btn btn-primary w-100">Simpan</button>
                     </form>
