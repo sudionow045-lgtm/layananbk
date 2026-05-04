@@ -87,9 +87,26 @@ async function handleLogin(e) {
             const res = await callAPI('login', { username: document.getElementById('username').value, password });
             if (res.success) { localStorage.setItem('userRole', 'admin'); userRole = 'admin'; showApp(); } else alert(res.message);
         } else {
-            const nisn = document.getElementById('login-nisn').value, siswa = dataSiswa.find(s => s.NISN === nisn);
-            if (siswa && password === nisn) { localStorage.setItem('userRole', 'siswa'); localStorage.setItem('currentUser', JSON.stringify(siswa)); userRole = 'siswa'; currentUser = siswa; showApp(); }
-            else alert('Login Siswa Gagal!');
+            if (dataSiswa.length === 0) {
+                alert('Data siswa belum dimuat atau kosong. Silakan tunggu sebentar atau hubungi Admin.');
+                return;
+            }
+            const nisn = document.getElementById('login-nisn').value.trim(),
+                siswa = dataSiswa.find(s => s.NISN && s.NISN.toString().trim() === nisn);
+
+            if (siswa && password.trim() === nisn) {
+                localStorage.setItem('userRole', 'siswa');
+                localStorage.setItem('currentUser', JSON.stringify(siswa));
+                userRole = 'siswa';
+                currentUser = siswa;
+                showApp();
+            } else {
+                if (!siswa) {
+                    alert('NISN tidak terdaftar. Pastikan NISN sudah didaftarkan oleh Admin.');
+                } else {
+                    alert('Password salah. Gunakan NISN Anda sebagai password.');
+                }
+            }
         }
     } finally { btn.disabled = false; btn.innerHTML = originalText; }
 }
