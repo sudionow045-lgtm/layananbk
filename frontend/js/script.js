@@ -205,7 +205,7 @@ function loadSettingsToForm() {
     document.getElementById('setting-academic-year').value = appSettings.AcademicYear || '';
     document.getElementById('setting-wa-token').value = appSettings.WAToken || '';
     document.getElementById('setting-admin-pass').value = ''; // Password always empty for security
-    
+
     // Preview Kop Surat if exists
     if (appSettings.KopSurat) {
         const preview = document.getElementById('kop-preview-img');
@@ -218,7 +218,7 @@ function loadSettingsToForm() {
 function previewKop(input) {
     if (input.files && input.files[0]) {
         const reader = new FileReader();
-        reader.onload = function(e) {
+        reader.onload = function (e) {
             const preview = document.getElementById('kop-preview-img');
             const container = document.getElementById('kop-preview-container');
             preview.src = e.target.result;
@@ -313,7 +313,10 @@ function renderTableWali() {
 function renderTableLayanan() {
     const tbody = document.getElementById('table-layanan-body');
     tbody.innerHTML = '';
-    const filtered = dataLayanan.filter(item => item['Jenis Layanan'] === currentLayananType);
+    const filtered = currentLayananType === 'Semua' || currentLayananType === ''
+        ? dataLayanan
+        : dataLayanan.filter(item => item['Jenis Layanan'] === currentLayananType);
+
     filtered.forEach(item => {
         tbody.innerHTML += `
             <tr>
@@ -332,6 +335,20 @@ function renderTableLayanan() {
 function updateDashboardCounts() {
     document.getElementById('count-siswa').innerText = dataSiswa.length;
     document.getElementById('count-layanan').innerText = dataLayanan.length;
+
+    // Hitung per jenis layanan
+    const countBelajar = dataLayanan.filter(item => item['Jenis Layanan'] === 'Bimbingan Belajar').length;
+    const countSosial = dataLayanan.filter(item => item['Jenis Layanan'] === 'Bimbingan Sosial').length;
+    const countKarier = dataLayanan.filter(item => item['Jenis Layanan'] === 'Bimbingan Karier').length;
+    const countIndividu = dataLayanan.filter(item => item['Jenis Layanan'] === 'Konseling Individu').length;
+    const countKelompok = dataLayanan.filter(item => item['Jenis Layanan'] === 'Konseling Kelompok').length;
+
+    // Update UI
+    if (document.getElementById('count-belajar')) document.getElementById('count-belajar').innerText = countBelajar;
+    if (document.getElementById('count-sosial')) document.getElementById('count-sosial').innerText = countSosial;
+    if (document.getElementById('count-karier')) document.getElementById('count-karier').innerText = countKarier;
+    if (document.getElementById('count-individu')) document.getElementById('count-individu').innerText = countIndividu;
+    if (document.getElementById('count-kelompok')) document.getElementById('count-kelompok').innerText = countKelompok;
 }
 
 function updateSiswaSelect() {
