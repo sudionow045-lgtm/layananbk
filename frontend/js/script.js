@@ -619,14 +619,33 @@ async function callAPI(action, payload) {
     }
 
     try {
+        // Menggunakan mode 'cors' dan mengabaikan content-type application/json 
+        // untuk menghindari preflight OPTIONS request yang sering bermasalah di GAS
         const response = await fetch(GAS_URL, {
             method: 'POST',
+            mode: 'cors',
+            redirect: 'follow',
             body: JSON.stringify({ action, payload })
         });
-        return await response.json();
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const result = await response.json();
+        return result;
     } catch (error) {
         console.error('API Error:', error);
-        alert('Gagal menghubungi server backend.');
+
+        // Pesan error lebih spesifik untuk membantu diagnosa
+        let errorMsg = 'Gagal menghubungi server backend.';
+        if (error.message.includes('Failed to fetch') || error.message.includes('NetworkError')) {
+            errorMsg += '\n\nKemungkinan penyebab:\n1. GAS_URL salah atau belum di-deploy.\n2. Script belum diatur ke "Anyone/Siapa saja".\n3. Masalah koneksi internet.';
+        } else {
+            errorMsg += '\nError: ' + error.message;
+        }
+
+        alert(errorMsg);
         return { success: false };
     }
 }
