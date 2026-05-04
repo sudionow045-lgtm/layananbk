@@ -646,6 +646,11 @@ function handleMockAPI(action, payload) {
             PertanyaanInstrumen: JSON.parse(localStorage.getItem('mockPertanyaanInstrumen') || '[]'),
             Settings: JSON.parse(localStorage.getItem('mockSettings') || '{"AdminPass": "Lajoroni234", "SchoolName": "Layanan BK Sekolah"}')
         };
+
+        // Force fix if mock password was corrupted in localStorage
+        if (window.mockDb.Settings && !window.mockDb.Settings.AdminPass) {
+            window.mockDb.Settings.AdminPass = "Lajoroni234";
+        }
     }
 
     switch (action) {
@@ -684,6 +689,13 @@ function handleMockAPI(action, payload) {
 }
 
 async function refreshData() {
+    // Load settings first as it's needed for login and UI
+    const resSettings = await callAPI('getSettings', {});
+    if (resSettings.success) {
+        appSettings = resSettings.data;
+        updateUIFromSettings();
+    }
+
     const resSiswa = await callAPI('getData', { sheetName: 'Siswa' });
     if (resSiswa.success) {
         dataSiswa = resSiswa.data;
@@ -733,12 +745,6 @@ async function refreshData() {
     const resPertanyaan = await callAPI('getData', { sheetName: 'PertanyaanInstrumen' });
     if (resPertanyaan.success) {
         dataPertanyaan = resPertanyaan.data;
-    }
-
-    const resSettings = await callAPI('getSettings', {});
-    if (resSettings.success) {
-        appSettings = resSettings.data;
-        updateUIFromSettings();
     }
 
     updateDashboardCounts();
