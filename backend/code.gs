@@ -3,7 +3,7 @@
  * File: code.gs
  */
 
-const SPREADSHEET_ID = 'YOUR_SPREADSHEET_ID_HERE'; // Ganti dengan ID Spreadsheet Anda
+const SPREADSHEET_ID = '1tIRGjeZp52eAV8u2dc8OZ7PKTOz5E_OFe2uV_wagDcE'; // Ganti dengan ID Spreadsheet Anda
 const ADMIN_USER = 'admin';
 const ADMIN_PASS = 'Lajoroni234';
 
