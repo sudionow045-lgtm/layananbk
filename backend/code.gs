@@ -1,100 +1,70 @@
 /**
- * APLIKASI LAYANAN BK - BACKEND (Google Apps Script)
- * File: code.gs
+ * APLIKASI LAYANAN BK - BACKEND (Google Apps Script) - COMPRESSED VERSION
  */
 
-const SPREADSHEET_ID = '1PEOWpAJRX8kgC5B1pfDNhiD3q8K8TGai1rpZsTVcdCM'; // Ganti dengan ID Spreadsheet Anda
+const SPREADSHEET_ID = '1PEOWpAJRX8kgC5B1pfDNhiD3q8K8TGai1rpZsTVcdCM';
 const ADMIN_USER = 'admin';
 const ADMIN_PASS = 'Lajoroni234';
 
+const SHEETS_CONFIG = {
+  'Siswa': ['ID', 'NISN', 'Nama', 'Tempat Lahir', 'Tanggal Lahir', 'Jenis Kelamin', 'Agama', 'Nama Orang Tua', 'Kelas', 'Status'],
+  'Guru': ['ID', 'Nama', 'NIP', 'Mata Pelajaran'],
+  'WaliKelas': ['ID', 'Nama', 'Kelas'],
+  'LayananBK': ['ID', 'Tanggal', 'Jenis Layanan', 'Siswa', 'Keterangan'],
+  'DCM': ['ID', 'Tanggal', 'Siswa', 'Hasil/Keterangan'],
+  'Potensi': ['ID', 'Tanggal', 'Siswa', 'Potensi Diri'],
+  'MinatBakat': ['ID', 'Tanggal', 'Siswa', 'Minat', 'Bakat'],
+  'GayaBelajar': ['ID', 'Tanggal', 'Siswa', 'Tipe Gaya Belajar'],
+  'JawabanInstrumen': ['ID', 'Tanggal', 'NISN', 'Nama', 'Kelas', 'Instrumen', 'Jawaban'],
+  'PertanyaanInstrumen': ['ID', 'Instrumen', 'Pertanyaan', 'Kategori'],
+  'Settings': ['Key', 'Value']
+};
+
+let _ss;
+const getSS = () => _ss || (_ss = SpreadsheetApp.openById(SPREADSHEET_ID));
+
 function doPost(e) {
   try {
-    const data = JSON.parse(e.postData.contents);
-    const action = data.action;
-    const payload = data.payload;
-
-    // Autentikasi Sederhana
-    if (action === 'login') {
-      if (payload.username === ADMIN_USER && payload.password === ADMIN_PASS) {
-        return createResponse({ success: true, message: 'Login Berhasil' });
-      } else {
-        return createResponse({ success: false, message: 'Username atau Password Salah' });
-      }
-    }
-
-    // Aksi lainnya memerlukan validasi login (dalam demo ini kita langsung proses)
-    switch (action) {
-      case 'getData':
-        return createResponse({ success: true, data: getAllData(payload.sheetName) });
-      case 'addData':
-        return createResponse({ success: true, data: addData(payload.sheetName, payload.rowData) });
-      case 'updateData':
-        return createResponse({ success: true, data: updateData(payload.sheetName, payload.id, payload.rowData) });
-      case 'deleteData':
-        return createResponse({ success: true, data: deleteData(payload.sheetName, payload.id) });
-      case 'getSettings':
-        return createResponse({ success: true, data: getSettings() });
-      case 'updateSettings':
-        return createResponse({ success: true, data: updateSettings(payload.settings) });
-      default:
-        return createResponse({ success: false, message: 'Aksi tidak dikenal' });
-    }
+    const { action, payload } = JSON.parse(e.postData.contents);
+    const actions = {
+      login: () => {
+        const settings = getSettings();
+        const isValid = payload.username === ADMIN_USER && (payload.password === ADMIN_PASS || payload.password === settings.AdminPass);
+        return { success: isValid, message: isValid ? 'Login Berhasil' : 'Username atau Password Salah' };
+      },
+      getData: () => ({ success: true, data: getAllData(payload.sheetName) }),
+      getBatchData: () => ({ success: true, data: getBatchData(payload.sheetNames) }),
+      addData: () => ({ success: true, data: addData(payload.sheetName, payload.rowData) }),
+      updateData: () => ({ success: true, data: updateData(payload.sheetName, payload.id, payload.rowData) }),
+      deleteData: () => ({ success: true, data: deleteData(payload.sheetName, payload.id) }),
+      getSettings: () => ({ success: true, data: getSettings() }),
+      updateSettings: () => ({ success: true, data: updateSettings(payload.settings) })
+    };
+    return createResponse(actions[action] ? actions[action]() : { success: false, message: 'Aksi tidak dikenal' });
   } catch (error) {
     return createResponse({ success: false, message: error.toString() });
   }
 }
 
-function doGet(e) {
-  return HtmlService.createHtmlOutput("Backend Aplikasi Layanan BK aktif. Spreadsheet ID: " + SPREADSHEET_ID);
-}
+function doGet() { return HtmlService.createHtmlOutput("Backend Aktif. ID: " + SPREADSHEET_ID); }
 
-/**
- * Fungsi untuk inisialisasi awal spreadsheet.
- * Jalankan fungsi ini sekali dari editor Apps Script untuk membuat semua sheet dan header.
- */
 function setup() {
-  const sheetNames = ['Siswa', 'Guru', 'WaliKelas', 'LayananBK', 'Settings', 'DCM', 'Potensi', 'MinatBakat', 'GayaBelajar', 'JawabanInstrumen', 'PertanyaanInstrumen'];
-  sheetNames.forEach(name => {
-    getSheet(name);
-  });
-  Logger.log('Inisialisasi Spreadsheet Berhasil!');
-}
-
-/**
- * Menambahkan menu ke Spreadsheet untuk memudahkan akses setup
- */
-function onOpen() {
-  const ui = SpreadsheetApp.getUi();
-  ui.createMenu('Layanan BK')
-      .addItem('Setup Spreadsheet', 'setup')
-      .addToUi();
+  Object.keys(SHEETS_CONFIG).forEach(name => getSheet(name));
+  return "Setup Berhasil!";
 }
 
 function createResponse(data) {
-  return ContentService.createTextOutput(JSON.stringify(data))
-    .setMimeType(ContentService.MimeType.JSON);
+  return ContentService.createTextOutput(JSON.stringify(data)).setMimeType(ContentService.MimeType.JSON);
 }
 
-// Spreadsheet Functions
 function getSheet(name) {
-  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const ss = getSS();
   let sheet = ss.getSheetByName(name);
   if (!sheet) {
     sheet = ss.insertSheet(name);
-    // Inisialisasi Header sesuai permintaan
-    if (name === 'Siswa') sheet.appendRow(['ID', 'NISN', 'Nama', 'Tempat Lahir', 'Tanggal Lahir', 'Jenis Kelamin', 'Agama', 'Nama Orang Tua', 'Kelas', 'Status']);
-    if (name === 'Guru') sheet.appendRow(['ID', 'Nama', 'NIP', 'Mata Pelajaran']);
-    if (name === 'WaliKelas') sheet.appendRow(['ID', 'Nama', 'Kelas']);
-    if (name === 'LayananBK') sheet.appendRow(['ID', 'Tanggal', 'Jenis Layanan', 'Siswa', 'Keterangan']);
-    if (name === 'DCM') sheet.appendRow(['ID', 'Tanggal', 'Siswa', 'Hasil/Keterangan']);
-    if (name === 'Potensi') sheet.appendRow(['ID', 'Tanggal', 'Siswa', 'Potensi Diri']);
-    if (name === 'MinatBakat') sheet.appendRow(['ID', 'Tanggal', 'Siswa', 'Minat', 'Bakat']);
-    if (name === 'GayaBelajar') sheet.appendRow(['ID', 'Tanggal', 'Siswa', 'Tipe Gaya Belajar']);
-    if (name === 'JawabanInstrumen') sheet.appendRow(['ID', 'Tanggal', 'NISN', 'Nama', 'Kelas', 'Instrumen', 'Jawaban']);
-    if (name === 'PertanyaanInstrumen') sheet.appendRow(['ID', 'Instrumen', 'Pertanyaan', 'Kategori']);
+    if (SHEETS_CONFIG[name]) sheet.appendRow(SHEETS_CONFIG[name]);
     if (name === 'Settings') {
-      sheet.appendRow(['Key', 'Value']);
-      sheet.appendRow(['SchoolName', 'SMP NEGERI 4 FAKFAK']);
+      sheet.appendRow(['SchoolName', 'Nama Sekolah Anda']);
       sheet.appendRow(['AdminPass', 'Lajoroni234']);
     }
   }
@@ -102,84 +72,58 @@ function getSheet(name) {
 }
 
 function getSettings() {
-  const sheet = getSheet('Settings');
-  const values = sheet.getDataRange().getValues();
-  const settings = {};
-  for (let i = 1; i < values.length; i++) {
-    settings[values[i][0]] = values[i][1];
-  }
-  return settings;
+  const values = getSheet('Settings').getDataRange().getValues();
+  return values.slice(1).reduce((acc, [key, val]) => ({ ...acc, [key]: val }), {});
 }
 
 function updateSettings(newSettings) {
   const sheet = getSheet('Settings');
   const values = sheet.getDataRange().getValues();
-  for (const key in newSettings) {
-    let found = false;
-    for (let i = 1; i < values.length; i++) {
-      if (values[i][0] === key) {
-        sheet.getRange(i + 1, 2).setValue(newSettings[key]);
-        found = true;
-        break;
-      }
-    }
-    if (!found) {
-      sheet.appendRow([key, newSettings[key]]);
-    }
+  const settingsMap = new Map(values.map((r, i) => [r[0], i]));
+  
+  for (const [key, val] of Object.entries(newSettings)) {
+    if (settingsMap.has(key)) sheet.getRange(settingsMap.get(key) + 1, 2).setValue(val);
+    else sheet.appendRow([key, val]);
   }
   return { message: 'Pengaturan diperbarui' };
 }
 
 function getAllData(sheetName) {
-  const sheet = getSheet(sheetName);
-  const values = sheet.getDataRange().getValues();
+  const values = getSheet(sheetName).getDataRange().getValues();
+  if (values.length <= 1) return [];
   const headers = values[0];
-  const data = [];
-  for (let i = 1; i < values.length; i++) {
-    const obj = {};
-    headers.forEach((header, index) => {
-      obj[header] = values[i][index];
-    });
-    data.push(obj);
-  }
-  return data;
+  return values.slice(1).map(row => headers.reduce((obj, h, i) => ({ ...obj, [h]: row[i] }), {}));
+}
+
+function getBatchData(sheetNames) {
+  return (sheetNames || Object.keys(SHEETS_CONFIG)).reduce((acc, name) => ({ ...acc, [name]: getAllData(name) }), {});
 }
 
 function addData(sheetName, rowData) {
   const sheet = getSheet(sheetName);
   const headers = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
-  const newRow = headers.map(header => rowData[header] || '');
-  if (!rowData.ID) newRow[0] = Utilities.getUuid(); // Auto ID jika tidak ada
+  const newRow = headers.map(h => (h === 'ID' && !rowData.ID) ? Utilities.getUuid() : (rowData[h] || ''));
   sheet.appendRow(newRow);
   return { message: 'Data berhasil ditambahkan' };
 }
 
 function updateData(sheetName, id, rowData) {
   const sheet = getSheet(sheetName);
-  const data = sheet.getDataRange().getValues();
-  const headers = data[0];
-  for (let i = 1; i < data.length; i++) {
-    if (data[i][0] == id) {
-      const rowNum = i + 1;
-      headers.forEach((header, index) => {
-        if (rowData[header] !== undefined) {
-          sheet.getRange(rowNum, index + 1).setValue(rowData[header]);
-        }
-      });
-      return { message: 'Data berhasil diperbarui' };
-    }
-  }
-  throw new Error('ID tidak ditemukan');
+  const values = sheet.getDataRange().getValues();
+  const headers = values[0];
+  const rowIndex = values.findIndex(r => r[0] == id);
+  if (rowIndex === -1) throw new Error('ID tidak ditemukan');
+  
+  const updatedRow = headers.map((h, i) => rowData[h] !== undefined ? rowData[h] : values[rowIndex][i]);
+  sheet.getRange(rowIndex + 1, 1, 1, headers.length).setValues([updatedRow]);
+  return { message: 'Data berhasil diperbarui' };
 }
 
 function deleteData(sheetName, id) {
   const sheet = getSheet(sheetName);
-  const data = sheet.getDataRange().getValues();
-  for (let i = 1; i < data.length; i++) {
-    if (data[i][0] == id) {
-      sheet.deleteRow(i + 1);
-      return { message: 'Data berhasil dihapus' };
-    }
-  }
-  throw new Error('ID tidak ditemukan');
+  const values = sheet.getDataRange().getValues();
+  const rowIndex = values.findIndex(r => r[0] == id);
+  if (rowIndex === -1) throw new Error('ID tidak ditemukan');
+  sheet.deleteRow(rowIndex + 1);
+  return { message: 'Data berhasil dihapus' };
 }
