@@ -1,5 +1,5 @@
 // Configuration
-const GAS_URL = 'YOUR_GAS_WEB_APP_URL_HERE'; // Ganti setelah deploy code.gs di Google Apps Script
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbwCp_tuWPH-tRtxmTvVk7tmoWKvfA97eOdXjrhV4G08G0noh2h0GSxE9X4eX85Z4ilu/exec'; // Ganti setelah deploy code.gs di Google Apps Script
 
 // State Management
 let currentSection = 'dashboard';
