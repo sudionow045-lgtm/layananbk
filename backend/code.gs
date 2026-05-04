@@ -32,8 +32,6 @@ function doPost(e) {
         return createResponse({ success: true, data: updateData(payload.sheetName, payload.id, payload.rowData) });
       case 'deleteData':
         return createResponse({ success: true, data: deleteData(payload.sheetName, payload.id) });
-      case 'sendWA':
-        return createResponse(sendWhatsAppNotification(payload.phone, payload.message));
       case 'getSettings':
         return createResponse({ success: true, data: getSettings() });
       case 'updateSettings':
@@ -84,7 +82,7 @@ function getSheet(name) {
   if (!sheet) {
     sheet = ss.insertSheet(name);
     // Inisialisasi Header sesuai permintaan
-    if (name === 'Siswa') sheet.appendRow(['ID', 'NISN', 'Nama', 'Tempat Lahir', 'Tanggal Lahir', 'Jenis Kelamin', 'Agama', 'Nama Orang Tua', 'Kelas', 'Status', 'No WA Orang Tua']);
+    if (name === 'Siswa') sheet.appendRow(['ID', 'NISN', 'Nama', 'Tempat Lahir', 'Tanggal Lahir', 'Jenis Kelamin', 'Agama', 'Nama Orang Tua', 'Kelas', 'Status']);
     if (name === 'Guru') sheet.appendRow(['ID', 'Nama', 'NIP', 'Mata Pelajaran']);
     if (name === 'WaliKelas') sheet.appendRow(['ID', 'Nama', 'Kelas']);
     if (name === 'LayananBK') sheet.appendRow(['ID', 'Tanggal', 'Jenis Layanan', 'Siswa', 'Keterangan']);
@@ -97,7 +95,6 @@ function getSheet(name) {
     if (name === 'Settings') {
       sheet.appendRow(['Key', 'Value']);
       sheet.appendRow(['SchoolName', 'Nama Sekolah Anda']);
-      sheet.appendRow(['WAToken', 'YOUR_FONNTE_TOKEN']);
       sheet.appendRow(['AdminPass', 'Lajoroni234']);
     }
   }
@@ -185,32 +182,4 @@ function deleteData(sheetName, id) {
     }
   }
   throw new Error('ID tidak ditemukan');
-}
-
-function sendWhatsAppNotification(phone, message) {
-  const settings = getSettings();
-  const token = settings.WAToken || 'YOUR_FONNTE_TOKEN'; 
-  
-  if (token === 'YOUR_FONNTE_TOKEN' || token === '') {
-    return { success: true, message: 'Simulasi: Notifikasi WA terkirim ke ' + phone };
-  }
-
-  const url = 'https://api.fonnte.com/send';
-  const options = {
-    method: 'post',
-    payload: {
-      target: phone,
-      message: message,
-    },
-    headers: {
-      Authorization: token
-    }
-  };
-  
-  try {
-    const response = UrlFetchApp.fetch(url, options);
-    return { success: true, message: 'Notifikasi WA terkirim' };
-  } catch (e) {
-    return { success: false, message: 'Gagal mengirim WA: ' + e.toString() };
-  }
 }
