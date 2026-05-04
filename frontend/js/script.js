@@ -131,15 +131,24 @@ async function handleLogin(e) {
     const role = document.getElementById('login-role').value;
     const password = document.getElementById('password').value;
 
+    console.log('Login attempt:', { role, password, currentSettings: appSettings });
+
     if (role === 'admin') {
         const username = document.getElementById('username').value;
+        // Gunakan password dari settings, atau fallback ke default
         const adminPass = (appSettings && appSettings.AdminPass) ? appSettings.AdminPass : 'Lajoroni234';
-        if (username === 'admin' && password === adminPass) {
+
+        // Username admin bersifat case-insensitive (admin/Admin/ADMIN tetap bisa)
+        if (username.toLowerCase() === 'admin' && password === adminPass) {
             sessionStorage.setItem('userRole', 'admin');
             userRole = 'admin';
             showApp();
         } else {
-            alert('Login Admin Gagal!');
+            if (username.toLowerCase() !== 'admin') {
+                alert('Username Admin salah! Gunakan "admin"');
+            } else {
+                alert('Password Admin salah!');
+            }
         }
     } else {
         const nisn = document.getElementById('login-nisn').value;
@@ -595,8 +604,15 @@ async function handleSavePertanyaan(e) {
 
 // API Calls
 async function callAPI(action, payload) {
-    if (GAS_URL === 'YOUR_GAS_WEB_APP_URL_HERE') {
-        console.warn('GAS_URL belum dikonfigurasi. Menggunakan data lokal (mock).');
+    // Validasi URL: Harus dimulai dengan https://script.google.com
+    const isValidURL = GAS_URL.startsWith('https://script.google.com');
+
+    if (GAS_URL === 'YOUR_GAS_WEB_APP_URL_HERE' || !isValidURL) {
+        if (!isValidURL && GAS_URL !== 'YOUR_GAS_WEB_APP_URL_HERE') {
+            console.error('GAS_URL tidak valid! Pastikan Anda memasukkan URL Web App (bukan ID Spreadsheet).');
+        } else {
+            console.warn('GAS_URL belum dikonfigurasi. Menggunakan data lokal (mock).');
+        }
         return handleMockAPI(action, payload);
     }
 
