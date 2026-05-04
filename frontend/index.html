@@ -84,6 +84,9 @@
                                         Kelas</a></li>
                             </ul>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" onclick="showSection('pengaturan')">Pengaturan</a>
+                        </li>
                     </ul>
                     <div class="d-flex">
                         <button class="btn btn-outline-light" onclick="logout()">Logout</button>
@@ -208,6 +211,64 @@
                         <tbody id="table-wali-body"></tbody>
                     </table>
                 </div>
+            </section>
+
+            <!-- Pengaturan Section -->
+            <section id="pengaturan" class="content-section d-none">
+                <div class="mb-3">
+                    <h2>Pengaturan Aplikasi</h2>
+                    <p class="text-muted">Konfigurasi sistem, notifikasi WhatsApp, dan profil admin.</p>
+                </div>
+                <form id="form-pengaturan">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="card mb-4">
+                                <div class="card-header bg-light"><strong>Informasi Umum</strong></div>
+                                <div class="card-body">
+                                    <div class="mb-3">
+                                        <label class="form-label">Nama Sekolah</label>
+                                        <input type="text" id="setting-school-name" class="form-control"
+                                            placeholder="Contoh: SMA Negeri 1 Jakarta">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Tahun Pelajaran</label>
+                                        <input type="text" id="setting-academic-year" class="form-control"
+                                            placeholder="Contoh: 2023/2024">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card mb-4">
+                                <div class="card-header bg-light"><strong>Integrasi WhatsApp</strong></div>
+                                <div class="card-body">
+                                    <div class="mb-3">
+                                        <label class="form-label">Fonnte API Token</label>
+                                        <input type="password" id="setting-wa-token" class="form-control"
+                                            placeholder="Masukkan Token API Fonnte">
+                                        <div class="form-text">Dapatkan token di <a href="https://fonnte.com"
+                                                target="_blank">fonnte.com</a></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="card mb-4">
+                                <div class="card-header bg-light"><strong>Keamanan</strong></div>
+                                <div class="card-body">
+                                    <div class="mb-3">
+                                        <label class="form-label">Ganti Password Admin</label>
+                                        <input type="password" id="setting-admin-pass" class="form-control"
+                                            placeholder="Password Baru">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary px-5 mt-3">Simpan Semua Pengaturan</button>
+                </form>
             </section>
         </div>
     </div>
