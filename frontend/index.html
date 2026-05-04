@@ -604,7 +604,7 @@
             <section id="pengaturan" class="content-section d-none">
                 <div class="mb-3">
                     <h2>Pengaturan Aplikasi</h2>
-                    <p class="text-muted">Konfigurasi sistem, notifikasi WhatsApp, dan profil admin.</p>
+                    <p class="text-muted">Konfigurasi sistem dan profil admin.</p>
                 </div>
                 <form id="form-pengaturan">
                     <div class="row">
@@ -634,22 +634,6 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-6">
-                            <div class="card mb-4">
-                                <div class="card-header bg-light"><strong>Integrasi WhatsApp</strong></div>
-                                <div class="card-body">
-                                    <div class="mb-3">
-                                        <label class="form-label">Fonnte API Token</label>
-                                        <input type="password" id="setting-wa-token" class="form-control"
-                                            placeholder="Masukkan Token API Fonnte">
-                                        <div class="form-text">Dapatkan token di <a href="https://fonnte.com"
-                                                target="_blank">fonnte.com</a></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
                         <div class="col-md-6">
                             <div class="card mb-4">
                                 <div class="card-header bg-light"><strong>Keamanan</strong></div>
@@ -746,10 +730,6 @@
                             <label class="form-label">Keterangan</label>
                             <textarea id="layanan-keterangan" class="form-control" rows="3" required></textarea>
                         </div>
-                        <div class="form-check mb-3">
-                            <input class="form-check-input" type="checkbox" id="send-wa-check">
-                            <label class="form-check-label">Kirim Notifikasi ke Orang Tua (WhatsApp)</label>
-                        </div>
                         <button type="submit" class="btn btn-primary w-100">Simpan</button>
                     </form>
                 </div>
@@ -826,10 +806,6 @@
                                     <option value="Keluar">Keluar</option>
                                 </select>
                             </div>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">No WA Orang Tua (Contoh: 628123456789)</label>
-                            <input type="text" id="siswa-wa" class="form-control" required>
                         </div>
                         <button type="submit" class="btn btn-primary w-100">Simpan</button>
                     </form>
