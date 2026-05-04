@@ -101,6 +101,8 @@
                                 <li>
                                     <hr class="dropdown-divider">
                                 </li>
+                                <li><a class="dropdown-item" href="#" onclick="showSection('kelola-pertanyaan')">Kelola
+                                        Pertanyaan</a></li>
                                 <li><a class="dropdown-item" href="#"
                                         onclick="showSection('analisis-instrumen')">Analisis Hasil</a></li>
                             </ul>
@@ -390,6 +392,37 @@
                 </div>
                 <div id="analisis-result-container">
                     <!-- Charts and percentages will be here -->
+                </div>
+            </section>
+
+            <!-- Kelola Pertanyaan Section -->
+            <section id="kelola-pertanyaan" class="content-section d-none">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h2>Kelola Pertanyaan Instrumen</h2>
+                    <button class="btn btn-primary" onclick="openModalPertanyaan()">Tambah Pertanyaan</button>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <label class="form-label">Filter Instrumen</label>
+                        <select id="filter-kelola-instrumen" class="form-select" onchange="renderTablePertanyaan()">
+                            <option value="DCM">Daftar Cek Masalah (DCM)</option>
+                            <option value="Potensi">Kenali Potensi</option>
+                            <option value="Minat">Minat Bakat</option>
+                            <option value="Gaya">Gaya Belajar</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Pertanyaan</th>
+                                <th>Kategori</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="table-pertanyaan-body"></tbody>
+                    </table>
                 </div>
             </section>
 
@@ -925,6 +958,41 @@
                             </select>
                         </div>
                         <button type="submit" class="btn btn-primary w-100">Simpan</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Pertanyaan -->
+    <div class="modal fade" id="modalPertanyaan" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Kelola Pertanyaan</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="form-pertanyaan">
+                        <div class="mb-3">
+                            <label class="form-label">Instrumen</label>
+                            <select id="pertanyaan-instrumen" class="form-select" required>
+                                <option value="DCM">Daftar Cek Masalah (DCM)</option>
+                                <option value="Potensi">Kenali Potensi</option>
+                                <option value="Minat">Minat Bakat</option>
+                                <option value="Gaya">Gaya Belajar</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Pertanyaan</label>
+                            <textarea id="pertanyaan-teks" class="form-control" rows="3" required></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Kategori</label>
+                            <input type="text" id="pertanyaan-kategori" class="form-control"
+                                placeholder="Contoh: Kesehatan, Belajar, Visual, dll" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Simpan Pertanyaan</button>
                     </form>
                 </div>
             </div>
