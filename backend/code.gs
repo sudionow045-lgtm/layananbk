@@ -79,8 +79,8 @@ function getSheet(name) {
   let sheet = ss.getSheetByName(name);
   if (!sheet) {
     sheet = ss.insertSheet(name);
-    // Inisialisasi Header jika perlu
-    if (name === 'Siswa') sheet.appendRow(['ID', 'Nama', 'Kelas', 'No WA Orang Tua']);
+    // Inisialisasi Header sesuai permintaan
+    if (name === 'Siswa') sheet.appendRow(['ID', 'NISN', 'Nama', 'Tempat Lahir', 'Tanggal Lahir', 'Jenis Kelamin', 'Agama', 'Nama Orang Tua', 'Kelas', 'Status', 'No WA Orang Tua']);
     if (name === 'Guru') sheet.appendRow(['ID', 'Nama', 'NIP', 'Mata Pelajaran']);
     if (name === 'WaliKelas') sheet.appendRow(['ID', 'Nama', 'Kelas']);
     if (name === 'LayananBK') sheet.appendRow(['ID', 'Tanggal', 'Jenis Layanan', 'Siswa', 'Keterangan']);
