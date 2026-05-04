@@ -637,9 +637,6 @@ function handleMockAPI(action, payload) {
             window.mockDb[payload.sheetName].push(newData);
             localStorage.setItem('mock' + payload.sheetName, JSON.stringify(window.mockDb[payload.sheetName]));
             return { success: true };
-        case 'sendWA':
-            alert(`MENSIMULASIKAN WA ke ${payload.phone}: ${payload.message}`);
-            return { success: true };
         default:
             return { success: true, data: [] };
     }
@@ -715,7 +712,6 @@ function updateUIFromSettings() {
 function loadSettingsToForm() {
     document.getElementById('setting-school-name').value = appSettings.SchoolName || '';
     document.getElementById('setting-academic-year').value = appSettings.AcademicYear || '';
-    document.getElementById('setting-wa-token').value = appSettings.WAToken || '';
     document.getElementById('setting-admin-pass').value = ''; // Password always empty for security
 
     // Preview Kop Surat if exists
@@ -744,8 +740,7 @@ async function handleSaveSettings(e) {
     e.preventDefault();
     const newSettings = {
         SchoolName: document.getElementById('setting-school-name').value,
-        AcademicYear: document.getElementById('setting-academic-year').value,
-        WAToken: document.getElementById('setting-wa-token').value
+        AcademicYear: document.getElementById('setting-academic-year').value
     };
 
     // Handle Kop Surat Image
@@ -990,8 +985,7 @@ async function handleSaveSiswa(e) {
         Agama: document.getElementById('siswa-agama').value,
         'Nama Orang Tua': document.getElementById('siswa-ortu').value,
         Kelas: document.getElementById('siswa-kelas').value,
-        Status: document.getElementById('siswa-status').value,
-        'No WA Orang Tua': document.getElementById('siswa-wa').value
+        Status: document.getElementById('siswa-status').value
     };
 
     const res = await callAPI('addData', { sheetName: 'Siswa', rowData });
@@ -1018,15 +1012,6 @@ async function handleSaveLayanan(e) {
 
     const res = await callAPI('addData', { sheetName: 'LayananBK', rowData });
     if (res.success) {
-        // WhatsApp Integration
-        if (document.getElementById('send-wa-check').checked) {
-            const siswa = dataSiswa.find(s => s.Nama === namaSiswa);
-            if (siswa && siswa['No WA Orang Tua']) {
-                const waMsg = `Halo Bapak/Ibu, menginfokan bahwa ananda ${namaSiswa} telah mengikuti layanan ${currentLayananType} pada tanggal ${tanggal}. Keterangan: ${keterangan}`;
-                await callAPI('sendWA', { phone: siswa['No WA Orang Tua'], message: waMsg });
-            }
-        }
-
         bootstrap.Modal.getInstance(document.getElementById('modalLayanan')).hide();
         document.getElementById('form-layanan').reset();
         await refreshData();
