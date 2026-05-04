@@ -15,10 +15,11 @@ let dataPotensi = [];
 let dataMinat = [];
 let dataGayaBelajar = [];
 let dataJawaban = [];
+let dataPertanyaan = [];
 let appSettings = {};
 
-// Questions Definition
-const INSTRUMEN_QUESTIONS = {
+// Questions Definition (Default if DB is empty)
+const DEFAULT_QUESTIONS = {
     DCM: [
         { id: 'dcm1', text: 'Saya sering merasa kurang sehat', category: 'Kesehatan' },
         { id: 'dcm2', text: 'Saya sering merasa pusing/sakit kepala', category: 'Kesehatan' },
@@ -76,6 +77,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Form Isi Instrumen
     document.getElementById('form-isi-instrumen').addEventListener('submit', handleSaveJawaban);
+
+    // Form Kelola Pertanyaan
+    document.getElementById('form-pertanyaan').addEventListener('submit', handleSavePertanyaan);
 
     // Form Pengaturan
     document.getElementById('form-pengaturan').addEventListener('submit', handleSaveSettings);
@@ -210,6 +214,7 @@ function showSection(sectionId, type = '') {
         else if (sectionId === 'instrumen-potensi') renderTableInstrumen('Potensi');
         else if (sectionId === 'instrumen-minat') renderTableInstrumen('Minat');
         else if (sectionId === 'instrumen-gaya-belajar') renderTableInstrumen('Gaya');
+        else if (sectionId === 'kelola-pertanyaan') renderTablePertanyaan();
         else if (sectionId === 'analisis-instrumen') updateAnalisisFilters();
 
         // Update active nav link
@@ -246,7 +251,12 @@ function startInstrumen(type) {
     document.getElementById('instrumen-form-container').classList.remove('d-none');
     document.getElementById('instrumen-form-title').innerText = `Isi Instrumen: ${type}`;
 
-    const questions = INSTRUMEN_QUESTIONS[type];
+    // Get questions from DB or defaults
+    let questions = dataPertanyaan.filter(p => p.Instrumen === type).map(p => ({ id: p.ID, text: p.Pertanyaan, category: p.Kategori }));
+    if (questions.length === 0) {
+        questions = DEFAULT_QUESTIONS[type];
+    }
+
     const container = document.getElementById('instrumen-questions-list');
     container.innerHTML = '';
 
@@ -278,7 +288,12 @@ function cancelInstrumen() {
 
 async function handleSaveJawaban(e) {
     e.preventDefault();
-    const questions = INSTRUMEN_QUESTIONS[currentFillingInstrumen];
+
+    let questions = dataPertanyaan.filter(p => p.Instrumen === currentFillingInstrumen).map(p => ({ id: p.ID, text: p.Pertanyaan, category: p.Kategori }));
+    if (questions.length === 0) {
+        questions = DEFAULT_QUESTIONS[currentFillingInstrumen];
+    }
+
     const jawaban = {};
 
     questions.forEach(q => {
@@ -310,7 +325,12 @@ function calculatePercentage(nisn, type) {
     if (!jawabanData) return null;
 
     const jawaban = JSON.parse(jawabanData.Jawaban);
-    const questions = INSTRUMEN_QUESTIONS[type];
+
+    let questions = dataPertanyaan.filter(p => p.Instrumen === type).map(p => ({ id: p.ID, text: p.Pertanyaan, category: p.Kategori }));
+    if (questions.length === 0) {
+        questions = DEFAULT_QUESTIONS[type];
+    }
+
     const categories = [...new Set(questions.map(q => q.category))];
 
     const results = {};
@@ -465,7 +485,10 @@ function generateAnalisis() {
             // Aggregate results for class
             const allResults = nisns.map(nisn => calculatePercentage(nisn, type)).filter(r => r !== null);
             if (allResults.length > 0) {
-                const questions = INSTRUMEN_QUESTIONS[type];
+                let questions = dataPertanyaan.filter(p => p.Instrumen === type).map(p => ({ id: p.ID, text: p.Pertanyaan, category: p.Kategori }));
+                if (questions.length === 0) {
+                    questions = DEFAULT_QUESTIONS[type];
+                }
                 const categories = [...new Set(questions.map(q => q.category))];
                 const classAvg = {};
 
@@ -512,6 +535,54 @@ function generateAnalisis() {
     }
 }
 
+// Manage Questions Functions
+function renderTablePertanyaan() {
+    const filterInstrumen = document.getElementById('filter-kelola-instrumen').value;
+    const tbody = document.getElementById('table-pertanyaan-body');
+    tbody.innerHTML = '';
+
+    const filtered = dataPertanyaan.filter(p => p.Instrumen === filterInstrumen);
+
+    if (filtered.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="3" class="text-center">Belum ada pertanyaan kustom. Menggunakan pertanyaan default.</td></tr>';
+        return;
+    }
+
+    filtered.forEach(item => {
+        tbody.innerHTML += `
+            <tr>
+                <td>${item.Pertanyaan}</td>
+                <td><span class="badge bg-info">${item.Kategori}</span></td>
+                <td>
+                    <button class="btn btn-sm btn-danger" onclick="deleteItem('PertanyaanInstrumen', '${item.ID}')">Hapus</button>
+                </td>
+            </tr>
+        `;
+    });
+}
+
+function openModalPertanyaan() {
+    const modal = new bootstrap.Modal(document.getElementById('modalPertanyaan'));
+    modal.show();
+}
+
+async function handleSavePertanyaan(e) {
+    e.preventDefault();
+    const rowData = {
+        Instrumen: document.getElementById('pertanyaan-instrumen').value,
+        Pertanyaan: document.getElementById('pertanyaan-teks').value,
+        Kategori: document.getElementById('pertanyaan-kategori').value
+    };
+
+    const res = await callAPI('addData', { sheetName: 'PertanyaanInstrumen', rowData });
+    if (res.success) {
+        bootstrap.Modal.getInstance(document.getElementById('modalPertanyaan')).hide();
+        document.getElementById('form-pertanyaan').reset();
+        await refreshData();
+        renderTablePertanyaan();
+    }
+}
+
 // API Calls
 async function callAPI(action, payload) {
     if (GAS_URL === 'YOUR_GAS_WEB_APP_URL_HERE') {
@@ -546,6 +617,7 @@ function handleMockAPI(action, payload) {
             MinatBakat: JSON.parse(localStorage.getItem('mockMinatBakat') || '[]'),
             GayaBelajar: JSON.parse(localStorage.getItem('mockGayaBelajar') || '[]'),
             JawabanInstrumen: JSON.parse(localStorage.getItem('mockJawabanInstrumen') || '[]'),
+            PertanyaanInstrumen: JSON.parse(localStorage.getItem('mockPertanyaanInstrumen') || '[]'),
             Settings: JSON.parse(localStorage.getItem('mockSettings') || '{"AdminPass": "Lajoroni234", "SchoolName": "Layanan BK Sekolah"}')
         };
     }
@@ -618,6 +690,11 @@ async function refreshData() {
     const resJawaban = await callAPI('getData', { sheetName: 'JawabanInstrumen' });
     if (resJawaban.success) {
         dataJawaban = resJawaban.data;
+    }
+
+    const resPertanyaan = await callAPI('getData', { sheetName: 'PertanyaanInstrumen' });
+    if (resPertanyaan.success) {
+        dataPertanyaan = resPertanyaan.data;
     }
 
     const resSettings = await callAPI('getSettings', {});
@@ -969,6 +1046,7 @@ async function deleteItem(sheetName, id) {
             else if (sheetName === 'Potensi') renderTablePotensi();
             else if (sheetName === 'MinatBakat') renderTableMinat();
             else if (sheetName === 'GayaBelajar') renderTableGayaBelajar();
+            else if (sheetName === 'PertanyaanInstrumen') renderTablePertanyaan();
             else renderTableLayanan();
         }
     }
