@@ -8,9 +8,12 @@ let dataSiswa = [];
 let dataLayanan = [];
 let dataGuru = [];
 let dataWali = [];
+let appSettings = {};
 
 // Initialize
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
+    // Load settings first so we have the correct admin password and school name
+    await refreshData();
     checkLogin();
 
     // Login Form
@@ -27,6 +30,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Form Wali
     document.getElementById('form-wali').addEventListener('submit', (e) => handleSaveGeneric(e, 'WaliKelas', 'modalWali', 'form-wali', ['Nama', 'Kelas'], ['wali-nama', 'wali-kelas']));
+
+    // Form Pengaturan
+    document.getElementById('form-pengaturan').addEventListener('submit', handleSaveSettings);
 });
 
 function checkLogin() {
@@ -43,8 +49,10 @@ function handleLogin(e) {
     const username = document.getElementById('username').value;
     const password = document.getElementById('password').value;
 
-    // Untuk demo/lokal jika GAS_URL belum ada, kita bypass dengan kredensial yang diminta user
-    if (username === 'admin' && password === 'Lajoroni234') {
+    // Use password from settings if available, otherwise fallback to default
+    const adminPass = appSettings.AdminPass || 'Lajoroni234';
+
+    if (username === 'admin' && password === adminPass) {
         sessionStorage.setItem('isLoggedIn', 'true');
         showApp();
     } else {
@@ -91,6 +99,8 @@ function showSection(sectionId, type = '') {
         renderTableGuru();
     } else if (sectionId === 'data-wali-kelas') {
         renderTableWali();
+    } else if (sectionId === 'pengaturan') {
+        loadSettingsToForm();
     } else if (sectionId === 'dashboard') {
         updateDashboardCounts();
     }
@@ -164,7 +174,46 @@ async function refreshData() {
         dataWali = resWali.data;
     }
 
+    const resSettings = await callAPI('getSettings', {});
+    if (resSettings.success) {
+        appSettings = resSettings.data;
+        updateUIFromSettings();
+    }
+
     updateDashboardCounts();
+}
+
+function updateUIFromSettings() {
+    if (appSettings.SchoolName) {
+        document.querySelector('.navbar-brand').innerHTML = `<i class="fas fa-graduation-cap me-2"></i>${appSettings.SchoolName}`;
+    }
+}
+
+function loadSettingsToForm() {
+    document.getElementById('setting-school-name').value = appSettings.SchoolName || '';
+    document.getElementById('setting-academic-year').value = appSettings.AcademicYear || '';
+    document.getElementById('setting-wa-token').value = appSettings.WAToken || '';
+    document.getElementById('setting-admin-pass').value = ''; // Password always empty for security
+}
+
+async function handleSaveSettings(e) {
+    e.preventDefault();
+    const newSettings = {
+        SchoolName: document.getElementById('setting-school-name').value,
+        AcademicYear: document.getElementById('setting-academic-year').value,
+        WAToken: document.getElementById('setting-wa-token').value
+    };
+
+    const newPass = document.getElementById('setting-admin-pass').value;
+    if (newPass) {
+        newSettings.AdminPass = newPass;
+    }
+
+    const res = await callAPI('updateSettings', { settings: newSettings });
+    if (res.success) {
+        alert('Pengaturan berhasil disimpan!');
+        await refreshData();
+    }
 }
 
 // UI Rendering
