@@ -4,30 +4,60 @@ import React, { useState } from 'react';
  * Login component for BK application
  */
 const Login: React.FC = () => {
-    const [role, setRole] = useState<'admin' | 'siswa'>('admin');
-    const [username, setUsername] = useState('');
-    const [password, setPassword] = useState('');
-    const [nisn, setNisn] = useState('');
+  const [role, setRole] = useState<'admin' | 'siswa'>('admin');
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [nisn, setNisn] = useState('');
+  const [error, setError] = useState('');
 
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        console.log('Login attempt:', { role, username, password, nisn });
-        // Logika login akan diimplementasikan di sini
-    };
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setError('');
 
-    return (
-        <div className="container">
-            <div className="row justify-content-center align-items-center vh-100">
-                <div className="col-md-4">
-                    <div className="card shadow-lg border-0">
-                        <div className="card-body p-5">
-                            <div className="text-center mb-4">
-                                <i className="fas fa-graduation-cap fa-3x text-primary mb-3"></i>
-                                <h3 className="fw-bold">Login BK</h3>
-                                <p className="text-muted">Aplikasi Layanan BK</p>
-                            </div>
+    if (role === 'admin') {
+      // Default admin password is 'Lajoroni234'
+      // In a real app, this would check against an API
+      const defaultPass = 'Lajoroni234';
+      if (username.toLowerCase() === 'admin' && password === defaultPass) {
+        alert('Login Admin Berhasil!');
+        sessionStorage.setItem('userRole', 'admin');
+        window.location.href = '#dashboard'; // Mock routing
+      } else {
+        setError(username.toLowerCase() !== 'admin' ? 'Username harus "admin"' : 'Password Admin salah.');
+      }
+    } else {
+      // Siswa login logic (mock)
+      if (nisn && password === nisn) {
+        alert('Login Siswa Berhasil!');
+        sessionStorage.setItem('userRole', 'siswa');
+        sessionStorage.setItem('currentUser', JSON.stringify({ Nama: 'Siswa Demo', NISN: nisn }));
+        window.location.href = '#siswa-dashboard';
+      } else {
+        setError('NISN atau Password salah. Gunakan NISN sebagai password.');
+      }
+    }
+  };
 
-                            <form onSubmit={handleSubmit}>
+  return (
+    <div className="container">
+      <div className="row justify-content-center align-items-center vh-100">
+        <div className="col-md-4">
+          <div className="card shadow-lg border-0">
+            <div className="card-body p-5">
+              <div className="text-center mb-4">
+                <i className="fas fa-graduation-cap fa-3x text-primary mb-3"></i>
+                <h3 className="fw-bold">Login BK</h3>
+                <p className="text-muted">Aplikasi Layanan BK</p>
+              </div>
+
+              {error && (
+                <div className="alert alert-danger small py-2" role="alert">
+                  <i className="fas fa-exclamation-circle me-2"></i>
+                  {error}
+                </div>
+              )}
+
+              <form onSubmit={handleSubmit}>
                                 <div className="mb-3">
                                     <label className="form-label small fw-bold">Masuk Sebagai</label>
                                     <select
