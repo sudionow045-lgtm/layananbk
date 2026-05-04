@@ -55,7 +55,7 @@ function doGet(e) {
  * Jalankan fungsi ini sekali dari editor Apps Script untuk membuat semua sheet dan header.
  */
 function setup() {
-  const sheetNames = ['Siswa', 'Guru', 'WaliKelas', 'LayananBK', 'Settings', 'DCM', 'Potensi', 'MinatBakat', 'GayaBelajar', 'JawabanInstrumen'];
+  const sheetNames = ['Siswa', 'Guru', 'WaliKelas', 'LayananBK', 'Settings', 'DCM', 'Potensi', 'MinatBakat', 'GayaBelajar', 'JawabanInstrumen', 'PertanyaanInstrumen'];
   sheetNames.forEach(name => {
     getSheet(name);
   });
@@ -93,6 +93,7 @@ function getSheet(name) {
     if (name === 'MinatBakat') sheet.appendRow(['ID', 'Tanggal', 'Siswa', 'Minat', 'Bakat']);
     if (name === 'GayaBelajar') sheet.appendRow(['ID', 'Tanggal', 'Siswa', 'Tipe Gaya Belajar']);
     if (name === 'JawabanInstrumen') sheet.appendRow(['ID', 'Tanggal', 'NISN', 'Nama', 'Kelas', 'Instrumen', 'Jawaban']);
+    if (name === 'PertanyaanInstrumen') sheet.appendRow(['ID', 'Instrumen', 'Pertanyaan', 'Kategori']);
     if (name === 'Settings') {
       sheet.appendRow(['Key', 'Value']);
       sheet.appendRow(['SchoolName', 'Nama Sekolah Anda']);
