@@ -8,6 +8,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
 <body>
@@ -20,8 +21,20 @@
                         <h3 class="text-center mb-4">Login Admin BK</h3>
                         <form id="login-form">
                             <div class="mb-3">
+                                <label class="form-label">Role</label>
+                                <select id="login-role" class="form-select" onchange="toggleLoginFields()">
+                                    <option value="admin">Admin BK</option>
+                                    <option value="siswa">Siswa</option>
+                                </select>
+                            </div>
+                            <div class="mb-3" id="field-username">
                                 <label class="form-label">Username</label>
-                                <input type="text" id="username" class="form-control" required>
+                                <input type="text" id="username" class="form-control">
+                            </div>
+                            <div class="mb-3" id="field-nisn" class="d-none" style="display:none;">
+                                <label class="form-label">NISN</label>
+                                <input type="text" id="login-nisn" class="form-control"
+                                    placeholder="Masukkan NISN Anda">
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Password</label>
@@ -37,13 +50,14 @@
 
     <!-- Main App Section (Hidden by default) -->
     <div id="app-container" class="d-none">
-        <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <!-- Admin Navbar -->
+        <nav id="admin-navbar" class="navbar navbar-expand-lg navbar-dark bg-primary d-none">
             <div class="container-fluid">
-                <a class="navbar-brand" href="#"><i class="fas fa-graduation-cap me-2"></i>Layanan BK</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <a class="navbar-brand" href="#"><i class="fas fa-graduation-cap me-2"></i>Layanan BK (Admin)</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#adminNav">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="collapse navbar-collapse" id="navbarNav">
+                <div class="collapse navbar-collapse" id="adminNav">
                     <ul class="navbar-nav me-auto">
                         <li class="nav-item">
                             <a class="nav-link active" href="#" onclick="showSection('dashboard')">Dashboard</a>
@@ -84,6 +98,11 @@
                                         Bakat</a></li>
                                 <li><a class="dropdown-item" href="#"
                                         onclick="showSection('instrumen-gaya-belajar')">Gaya Belajar</a></li>
+                                <li>
+                                    <hr class="dropdown-divider">
+                                </li>
+                                <li><a class="dropdown-item" href="#"
+                                        onclick="showSection('analisis-instrumen')">Analisis Hasil</a></li>
                             </ul>
                         </li>
                         <li class="nav-item dropdown">
@@ -102,6 +121,35 @@
                             <a class="nav-link" href="#" onclick="showSection('pengaturan')">Pengaturan</a>
                         </li>
                     </ul>
+                    <div class="d-flex">
+                        <button class="btn btn-outline-light" onclick="logout()">Logout</button>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Siswa Navbar -->
+        <nav id="siswa-navbar" class="navbar navbar-expand-lg navbar-dark bg-success d-none">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="#"><i class="fas fa-user-graduate me-2"></i>Layanan BK (Siswa)</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#siswaNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="siswaNav">
+                    <ul class="navbar-nav me-auto">
+                        <li class="nav-item">
+                            <a class="nav-link active" href="#" onclick="showSection('siswa-dashboard')">Dashboard</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" onclick="showSection('isi-instrumen')">Isi Instrumen BK</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" onclick="showSection('hasil-saya')">Hasil Saya</a>
+                        </li>
+                    </ul>
+                    <div class="d-flex align-items-center text-white me-3">
+                        <span id="display-nama-siswa"></span>
+                    </div>
                     <div class="d-flex">
                         <button class="btn btn-outline-light" onclick="logout()">Logout</button>
                     </div>
@@ -201,6 +249,147 @@
                             </div>
                         </div>
                     </div>
+                </div>
+            </section>
+
+            <!-- Siswa Dashboard Section -->
+            <section id="siswa-dashboard" class="content-section d-none">
+                <div class="row">
+                    <div class="col-md-12">
+                        <h2 id="welcome-siswa">Selamat Datang, Siswa</h2>
+                        <p class="lead">Silakan lengkapi instrumen BK untuk membantu guru pembimbing mengenal Anda lebih
+                            baik.</p>
+                    </div>
+                </div>
+                <div class="row mt-4">
+                    <div class="col-md-6 mb-4">
+                        <div class="card h-100 shadow-sm">
+                            <div class="card-body">
+                                <h5>Status Instrumen</h5>
+                                <ul class="list-group list-group-flush mt-3">
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        Daftar Cek Masalah (DCM)
+                                        <span id="status-dcm" class="badge bg-secondary">Belum Diisi</span>
+                                    </li>
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        Kenali Potensi
+                                        <span id="status-potensi" class="badge bg-secondary">Belum Diisi</span>
+                                    </li>
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        Minat Bakat
+                                        <span id="status-minat" class="badge bg-secondary">Belum Diisi</span>
+                                    </li>
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        Gaya Belajar
+                                        <span id="status-gaya" class="badge bg-secondary">Belum Diisi</span>
+                                    </li>
+                                </ul>
+                                <button class="btn btn-primary w-100 mt-4" onclick="showSection('isi-instrumen')">Mulai
+                                    Mengisi</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Isi Instrumen Section -->
+            <section id="isi-instrumen" class="content-section d-none">
+                <div class="mb-4">
+                    <h2>Pengisian Instrumen BK</h2>
+                    <p class="text-muted">Pilih instrumen yang ingin Anda isi.</p>
+                </div>
+                <div class="row g-4">
+                    <div class="col-md-3">
+                        <div class="card h-100 shadow-sm text-center p-3" style="cursor: pointer;"
+                            onclick="startInstrumen('DCM')">
+                            <i class="fas fa-clipboard-list fa-3x mb-3 text-primary"></i>
+                            <h5>Daftar Cek Masalah</h5>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card h-100 shadow-sm text-center p-3" style="cursor: pointer;"
+                            onclick="startInstrumen('Potensi')">
+                            <i class="fas fa-lightbulb fa-3x mb-3 text-warning"></i>
+                            <h5>Kenali Potensi</h5>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card h-100 shadow-sm text-center p-3" style="cursor: pointer;"
+                            onclick="startInstrumen('Minat')">
+                            <i class="fas fa-star fa-3x mb-3 text-danger"></i>
+                            <h5>Minat Bakat</h5>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card h-100 shadow-sm text-center p-3" style="cursor: pointer;"
+                            onclick="startInstrumen('Gaya')">
+                            <i class="fas fa-graduation-cap fa-3x mb-3 text-info"></i>
+                            <h5>Gaya Belajar</h5>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="instrumen-form-container" class="mt-5 d-none">
+                    <div class="card shadow">
+                        <div class="card-header bg-primary text-white">
+                            <h4 id="instrumen-form-title" class="mb-0">Instrumen</h4>
+                        </div>
+                        <div class="card-body">
+                            <form id="form-isi-instrumen">
+                                <div id="instrumen-questions-list">
+                                    <!-- Questions will be injected here -->
+                                </div>
+                                <div class="mt-4 text-end">
+                                    <button type="button" class="btn btn-secondary me-2"
+                                        onclick="cancelInstrumen()">Batal</button>
+                                    <button type="submit" class="btn btn-success px-5">Simpan Jawaban</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Hasil Saya Section -->
+            <section id="hasil-saya" class="content-section d-none">
+                <div class="mb-4">
+                    <h2>Hasil Instrumen Saya</h2>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div id="hasil-saya-content" class="row">
+                            <!-- Results will be injected here -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Analisis Instrumen (Admin) Section -->
+            <section id="analisis-instrumen" class="content-section d-none">
+                <div class="mb-4">
+                    <h2>Analisis Hasil Instrumen BK</h2>
+                </div>
+                <div class="row mb-4">
+                    <div class="col-md-4">
+                        <label class="form-label">Level Analisis</label>
+                        <select id="analisis-level" class="form-select" onchange="updateAnalisisFilters()">
+                            <option value="individu">Per Individu</option>
+                            <option value="kelompok">Per Kelompok</option>
+                            <option value="kelas">Per Kelas</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4" id="filter-siswa-container">
+                        <label class="form-label">Pilih Siswa</label>
+                        <select id="analisis-filter-siswa" class="form-select select-siswa"
+                            onchange="generateAnalisis()"></select>
+                    </div>
+                    <div class="col-md-4 d-none" id="filter-kelas-container">
+                        <label class="form-label">Pilih Kelas</label>
+                        <select id="analisis-filter-kelas" class="form-select" onchange="generateAnalisis()"></select>
+                    </div>
+                </div>
+                <div id="analisis-result-container">
+                    <!-- Charts and percentages will be here -->
                 </div>
             </section>
 
