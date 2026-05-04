@@ -5,7 +5,6 @@ Aplikasi manajemen layanan BK berbasis web dengan backend Google Apps Script dan
 ## Fitur Utama
 - **Jenis Layanan:** Belajar, Sosial, Karier, Konseling Individu, dan Konseling Kelompok.
 - **Manajemen Data:** Siswa, Guru, dan Wali Kelas.
-- **Notifikasi WhatsApp:** Integrasi notifikasi otomatis ke orang tua siswa.
 - **Dashboard Admin:** Ringkasan data yang informatif.
 - **Sistem Login:** Aman dengan kredensial admin.
 
