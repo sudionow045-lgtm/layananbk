@@ -2,7 +2,7 @@
  * APLIKASI LAYANAN BK - BACKEND (Google Apps Script) - COMPRESSED VERSION
  */
 
-const SPREADSHEET_ID = '1dePFAWsdKhegQw2-z1T5rz_4v7MpnCX2v4mfUnSaQA0';
+const SPREADSHEET_ID = '1PEOWpAJRX8kgC5B1pfDNhiD3q8K8TGai1rpZsTVcdCM';
 const ADMIN_USER = 'admin';
 const ADMIN_PASS = 'Lajoroni234';
 const CACHE_TIME = 600; // 10 menit
@@ -22,14 +22,39 @@ const SHEETS_CONFIG = {
 };
 
 let _ss;
-const getSS = () => _ss || (_ss = SpreadsheetApp.openById(SPREADSHEET_ID));
+const getSS = () => {
+  try {
+    if (!_ss) _ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    return _ss;
+  } catch (e) {
+    throw new Error("Gagal membuka Spreadsheet. Pastikan SPREADSHEET_ID benar dan Script memiliki izin akses. Detail: " + e.message);
+  }
+};
 
 function doPost(e) {
   try {
-    const { action, payload } = JSON.parse(e.postData.contents);
+    let action, payload;
+    
+    // Handle JSON body
+    if (e.postData && e.postData.contents) {
+      const data = JSON.parse(e.postData.contents);
+      action = data.action;
+      payload = data.payload;
+    } 
+    // Handle URL parameters (fallback)
+    else if (e.parameter && e.parameter.action) {
+      action = e.parameter.action;
+      payload = e.parameter.payload ? JSON.parse(e.parameter.payload) : {};
+    }
+
+    if (!action) {
+      return createResponse({ success: false, message: "Aksi tidak ditemukan dalam permintaan." });
+    }
+
     return createResponse(runAction(action, payload));
   } catch (error) {
-    return createResponse({ success: false, message: error.toString() });
+    console.error('doPost Error:', error.toString());
+    return createResponse({ success: false, message: "Terjadi kesalahan pada server: " + error.toString() });
   }
 }
 
@@ -37,42 +62,47 @@ function doPost(e) {
  * Helper function to run actions, accessible by doPost and google.script.run
  */
 function runAction(action, payload) {
+  const p = payload || {};
   try {
     const actions = {
+      test: () => ({ success: true, message: 'Koneksi ke Google Script Berhasil!', timestamp: new Date().toISOString() }),
       login: () => {
-        const p = payload || {};
         const settings = getSettings();
         const username = (p.username || '').toLowerCase().trim();
-        const password = p.password || '';
+        const password = (p.password || '').toString().trim();
         
         // Cek terhadap password default ATAU password di pengaturan sheet
+        const sheetPass = (settings.AdminPass || '').toString().trim();
+        
         const isDefaultPass = password === ADMIN_PASS;
-        const isSheetPass = password === settings.AdminPass;
+        const isSheetPass = sheetPass && password === sheetPass;
         const isValid = username === ADMIN_USER && (isDefaultPass || isSheetPass);
         
         console.log(`Login attempt: user=${username}, success=${isValid}`);
         
         return { 
           success: isValid, 
-          message: isValid ? 'Login Berhasil' : 'Username atau Password Salah. (Cek penulisan password)' 
+          message: isValid ? 'Login Berhasil' : 'Username atau Password Salah. (Gunakan admin / Lajoroni234)' 
         };
       },
-      getData: () => ({ success: true, data: getAllData(payload.sheetName) }),
-      getBatchData: () => ({ success: true, data: getBatchData(payload.sheetNames) }),
-      addData: () => ({ success: true, data: addData(payload.sheetName, payload.rowData) }),
-      updateData: () => ({ success: true, data: updateData(payload.sheetName, payload.id, payload.rowData) }),
-      deleteData: () => ({ success: true, data: deleteData(payload.sheetName, payload.id) }),
+      getData: () => ({ success: true, data: getAllData(p.sheetName) }),
+      getBatchData: () => ({ success: true, data: getBatchData(p.sheetNames) }),
+      addData: () => ({ success: true, data: addData(p.sheetName, p.rowData) }),
+      updateData: () => ({ success: true, data: updateData(p.sheetName, p.id, p.rowData) }),
+      deleteData: () => ({ success: true, data: deleteData(p.sheetName, p.id) }),
       getSettings: () => ({ success: true, data: getSettings() }),
-      updateSettings: () => ({ success: true, data: updateSettings(payload.settings) }),
+      updateSettings: () => ({ success: true, data: updateSettings(p.settings) }),
       clearCache: () => {
         const cache = CacheService.getScriptCache();
         Object.keys(SHEETS_CONFIG).forEach(name => cache.remove('data_' + name));
+        cache.remove('settings');
         return { success: true, message: 'Cache dibersihkan' };
       }
     };
     return actions[action] ? actions[action]() : { success: false, message: 'Aksi tidak dikenal: ' + action };
   } catch (error) {
-    return { success: false, message: error.toString() };
+    console.error('runAction Error:', error.toString());
+    return { success: false, message: 'Gagal menjalankan aksi ' + action + ': ' + error.toString() };
   }
 }
 
@@ -150,12 +180,18 @@ function getSheet(name) {
 
 function getSettings() {
   const cache = CacheService.getScriptCache();
-  const cached = cache.get('settings');
-  if (cached) return JSON.parse(cached);
+  try {
+    const cached = cache.get('settings');
+    if (cached) return JSON.parse(cached);
+  } catch (e) { console.warn('Cache error:', e); }
 
   const values = getSheet('Settings').getDataRange().getValues();
   const settings = values.slice(1).reduce((acc, [key, val]) => ({ ...acc, [key]: val }), {});
-  cache.put('settings', JSON.stringify(settings), CACHE_TIME);
+  
+  try {
+    cache.put('settings', JSON.stringify(settings), CACHE_TIME);
+  } catch (e) { console.warn('Cache put error:', e); }
+  
   return settings;
 }
 
