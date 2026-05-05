@@ -371,11 +371,15 @@ const logout = () => { localStorage.clear(); location.reload(); };
 
 async function handleLogin(e) {
     e.preventDefault();
-    const role = document.getElementById('login-role').value, password = document.getElementById('password').value, btn = e.target.querySelector('button[type="submit"]'), originalText = btn.innerHTML;
+    const role = document.getElementById('login-role').value,
+        password = document.getElementById('password').value,
+        btn = e.target.querySelector('button[type="submit"]'),
+        originalText = btn.innerHTML;
     btn.disabled = true; btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Memproses...';
     try {
         if (role === 'admin') {
-            const res = await callAPI('login', { username: document.getElementById('username').value, password });
+            const username = document.getElementById('username').value.trim().toLowerCase();
+            const res = await callAPI('login', { username, password });
             if (res.success) { localStorage.setItem('userRole', 'admin'); userRole = 'admin'; showApp(); } else alert(res.message);
         } else {
             if (dataSiswa.length === 0) {
@@ -898,6 +902,10 @@ function handleMockAPI(action, payload) {
     if (!window.mockDb) window.mockDb = Object.keys(TABLE_CONFIG).concat(['JawabanInstrumen', 'PertanyaanInstrumen']).reduce((acc, k) => ({ ...acc, [k]: JSON.parse(localStorage.getItem('mock' + k) || '[]') }), { Settings: { AdminPass: 'Lajoroni234', SchoolName: 'Demo BK' } });
     const db = window.mockDb;
     const responses = {
+        login: () => {
+            const isValid = payload.username.toLowerCase().trim() === 'admin' && payload.password === (db.Settings.AdminPass || 'Lajoroni234');
+            return { success: isValid, message: isValid ? 'Login Berhasil (Mock)' : 'Username atau Password Salah (Mock)' };
+        },
         getData: () => ({ success: true, data: db[payload.sheetName] || [] }),
         getBatchData: () => ({ success: true, data: payload.sheetNames.reduce((acc, n) => ({ ...acc, [n]: db[n] || [] }), {}) }),
         getSettings: () => ({ success: true, data: db.Settings }),
