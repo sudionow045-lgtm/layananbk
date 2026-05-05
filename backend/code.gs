@@ -5,6 +5,7 @@
 const SPREADSHEET_ID = '1PEOWpAJRX8kgC5B1pfDNhiD3q8K8TGai1rpZsTVcdCM';
 const ADMIN_USER = 'admin';
 const ADMIN_PASS = 'Lajoroni234';
+const CACHE_TIME = 600; // 10 menit
 
 const SHEETS_CONFIG = {
   'Siswa': ['ID', 'NISN', 'Nama', 'Tempat Lahir', 'Tanggal Lahir', 'Jenis Kelamin', 'Agama', 'Nama Orang Tua', 'Kelas', 'Status'],
@@ -38,7 +39,12 @@ function doPost(e) {
       updateData: () => ({ success: true, data: updateData(payload.sheetName, payload.id, payload.rowData) }),
       deleteData: () => ({ success: true, data: deleteData(payload.sheetName, payload.id) }),
       getSettings: () => ({ success: true, data: getSettings() }),
-      updateSettings: () => ({ success: true, data: updateSettings(payload.settings) })
+      updateSettings: () => ({ success: true, data: updateSettings(payload.settings) }),
+      clearCache: () => {
+        const cache = CacheService.getScriptCache();
+        Object.keys(SHEETS_CONFIG).forEach(name => cache.remove('data_' + name));
+        return { success: true, message: 'Cache dibersihkan' };
+      }
     };
     return createResponse(actions[action] ? actions[action]() : { success: false, message: 'Aksi tidak dikenal' });
   } catch (error) {
@@ -72,8 +78,14 @@ function getSheet(name) {
 }
 
 function getSettings() {
+  const cache = CacheService.getScriptCache();
+  const cached = cache.get('settings');
+  if (cached) return JSON.parse(cached);
+
   const values = getSheet('Settings').getDataRange().getValues();
-  return values.slice(1).reduce((acc, [key, val]) => ({ ...acc, [key]: val }), {});
+  const settings = values.slice(1).reduce((acc, [key, val]) => ({ ...acc, [key]: val }), {});
+  cache.put('settings', JSON.stringify(settings), CACHE_TIME);
+  return settings;
 }
 
 function updateSettings(newSettings) {
@@ -85,18 +97,63 @@ function updateSettings(newSettings) {
     if (settingsMap.has(key)) sheet.getRange(settingsMap.get(key) + 1, 2).setValue(val);
     else sheet.appendRow([key, val]);
   }
+  CacheService.getScriptCache().remove('settings');
   return { message: 'Pengaturan diperbarui' };
 }
 
 function getAllData(sheetName) {
+  const cache = CacheService.getScriptCache();
+  const cached = cache.get('data_' + sheetName);
+  if (cached) return JSON.parse(cached);
+
   const values = getSheet(sheetName).getDataRange().getValues();
   if (values.length <= 1) return [];
   const headers = values[0];
-  return values.slice(1).map(row => headers.reduce((obj, h, i) => ({ ...obj, [h]: row[i] }), {}));
+  const data = values.slice(1).map(row => headers.reduce((obj, h, i) => ({ ...obj, [h]: row[i] }), {}));
+  
+  try {
+    cache.put('data_' + sheetName, JSON.stringify(data), CACHE_TIME);
+  } catch (e) {
+    // Jika data terlalu besar untuk cache, abaikan saja
+  }
+  return data;
 }
 
 function getBatchData(sheetNames) {
-  return (sheetNames || Object.keys(SHEETS_CONFIG)).reduce((acc, name) => ({ ...acc, [name]: getAllData(name) }), {});
+  const names = sheetNames || Object.keys(SHEETS_CONFIG);
+  const cache = CacheService.getScriptCache();
+  const result = {};
+  const namesToFetch = [];
+
+  // Coba ambil dari cache dulu
+  names.forEach(name => {
+    const cached = cache.get('data_' + name);
+    if (cached) result[name] = JSON.parse(cached);
+    else namesToFetch.push(name);
+  });
+
+  // Fetch yang tidak ada di cache
+  if (namesToFetch.length > 0) {
+    const ss = getSS();
+    namesToFetch.forEach(name => {
+      const sheet = ss.getSheetByName(name);
+      if (!sheet) {
+        result[name] = [];
+        return;
+      }
+      const values = sheet.getDataRange().getValues();
+      if (values.length <= 1) {
+        result[name] = [];
+      } else {
+        const headers = values[0];
+        const data = values.slice(1).map(row => headers.reduce((obj, h, i) => ({ ...obj, [h]: row[i] }), {}));
+        result[name] = data;
+        try { cache.put('data_' + name, JSON.stringify(data), CACHE_TIME); } catch (e) {}
+      }
+    });
+  }
+
+  return result;
 }
 
 function addData(sheetName, rowData) {
@@ -104,6 +161,7 @@ function addData(sheetName, rowData) {
   const headers = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
   const newRow = headers.map(h => (h === 'ID' && !rowData.ID) ? Utilities.getUuid() : (rowData[h] || ''));
   sheet.appendRow(newRow);
+  CacheService.getScriptCache().remove('data_' + sheetName);
   return { message: 'Data berhasil ditambahkan' };
 }
 
@@ -116,6 +174,7 @@ function updateData(sheetName, id, rowData) {
   
   const updatedRow = headers.map((h, i) => rowData[h] !== undefined ? rowData[h] : values[rowIndex][i]);
   sheet.getRange(rowIndex + 1, 1, 1, headers.length).setValues([updatedRow]);
+  CacheService.getScriptCache().remove('data_' + sheetName);
   return { message: 'Data berhasil diperbarui' };
 }
 
@@ -125,5 +184,7 @@ function deleteData(sheetName, id) {
   const rowIndex = values.findIndex(r => r[0] == id);
   if (rowIndex === -1) throw new Error('ID tidak ditemukan');
   sheet.deleteRow(rowIndex + 1);
+  CacheService.getScriptCache().remove('data_' + sheetName);
   return { message: 'Data berhasil dihapus' };
 }
+
