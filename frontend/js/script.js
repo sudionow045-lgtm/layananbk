@@ -668,7 +668,7 @@ function previewKop(input) {
     if (input.files && input.files[0]) {
         const reader = new FileReader();
         reader.onload = (e) => {
-            imgContainer.innerHTML = `<img src="${e.target.result}" class="img-fluid kop-surat-img" style="max-height: 150px;">`;
+            imgContainer.innerHTML = `<img src="${e.target.result}" class="kop-surat-img" style="max-height: 250px;">`;
             textContainer.classList.add('d-none');
             imgContainer.classList.remove('d-none');
         };
@@ -703,7 +703,7 @@ const loadSettingsToForm = () => {
     schoolNameInput.addEventListener('input', updateKopPreviewText);
 
     if (appSettings.KopSurat) {
-        imgContainer.innerHTML = `<img src="${appSettings.KopSurat}" class="img-fluid kop-surat-img" style="max-height: 150px;">`;
+        imgContainer.innerHTML = `<img src="${appSettings.KopSurat}" class="kop-surat-img" style="max-height: 250px;">`;
         imgContainer.classList.remove('d-none');
         textContainer.classList.add('d-none');
     } else {
@@ -905,7 +905,7 @@ function generateAnalisis() {
     let kopHtml = '';
     if (appSettings.KopSurat) {
         kopHtml = `<div class="text-center mb-4 border-bottom pb-3">
-            <img src="${appSettings.KopSurat}" class="img-fluid kop-surat-img" style="max-height: 150px;">
+            <img src="${appSettings.KopSurat}" class="kop-surat-img" style="max-height: 250px;">
         </div>`;
     } else {
         kopHtml = `<div class="text-center mb-4 border-bottom pb-3">
