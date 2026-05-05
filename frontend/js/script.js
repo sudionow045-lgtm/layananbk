@@ -721,11 +721,18 @@ async function testBackendConnection() {
     btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Menghubungkan...';
 
     try {
-        const res = await callAPI('test', {});
+        // Coba 'testConnection' terlebih dahulu, jika gagal (lama) coba 'test'
+        const res = await callAPI('testConnection', {});
         if (res.success) {
             alert('Sukses! ' + res.message + '\n\nTimestamp: ' + res.timestamp);
         } else {
-            alert('Gagal: ' + res.message);
+            // Fallback ke 'test' jika 'testConnection' tidak dikenal
+            const resFallback = await callAPI('test', {});
+            if (resFallback.success) {
+                alert('Sukses! ' + resFallback.message + '\n\nTimestamp: ' + resFallback.timestamp);
+            } else {
+                alert('Gagal: ' + (res.message || resFallback.message || 'Aksi tidak dikenal'));
+            }
         }
     } catch (err) {
         alert('Kesalahan fatal saat mencoba menghubungkan ke backend.');
