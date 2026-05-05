@@ -43,3 +43,24 @@ body {
 .modal-content {
     border-radius: 15px;
 }
+
+/* Loading Animation */
+#loading-indicator {
+    transition: opacity 0.3s ease-in-out;
+    backdrop-filter: blur(3px);
+}
+
+.spinner-border {
+    width: 3rem;
+    height: 3rem;
+}
+
+/* Table Row Animation */
+tbody tr {
+    transition: all 0.2s;
+}
+
+tbody tr:hover {
+    background-color: rgba(78, 115, 223, 0.05);
+}
+
