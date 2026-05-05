@@ -40,10 +40,22 @@ function runAction(action, payload) {
   try {
     const actions = {
       login: () => {
+        const p = payload || {};
         const settings = getSettings();
-        const username = (payload.username || '').toLowerCase().trim();
-        const isValid = username === ADMIN_USER && (payload.password === ADMIN_PASS || payload.password === settings.AdminPass);
-        return { success: isValid, message: isValid ? 'Login Berhasil' : 'Username atau Password Salah' };
+        const username = (p.username || '').toLowerCase().trim();
+        const password = p.password || '';
+        
+        // Cek terhadap password default ATAU password di pengaturan sheet
+        const isDefaultPass = password === ADMIN_PASS;
+        const isSheetPass = password === settings.AdminPass;
+        const isValid = username === ADMIN_USER && (isDefaultPass || isSheetPass);
+        
+        console.log(`Login attempt: user=${username}, success=${isValid}`);
+        
+        return { 
+          success: isValid, 
+          message: isValid ? 'Login Berhasil' : 'Username atau Password Salah. (Cek penulisan password)' 
+        };
       },
       getData: () => ({ success: true, data: getAllData(payload.sheetName) }),
       getBatchData: () => ({ success: true, data: getBatchData(payload.sheetNames) }),
