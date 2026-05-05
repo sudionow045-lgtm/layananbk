@@ -7,7 +7,227 @@ let dataSiswa = [], dataLayanan = [], dataGuru = [], dataWali = [], dataDCM = []
 
 // Questions Definition
 const DEFAULT_QUESTIONS = {
-    DCM: [{ id: 'dcm1', text: 'Saya sering merasa kurang sehat', category: 'Kesehatan' }, { id: 'dcm2', text: 'Saya sering merasa pusing/sakit kepala', category: 'Kesehatan' }, { id: 'dcm3', text: 'Saya kurang bersemangat dalam belajar', category: 'Belajar' }, { id: 'dcm4', text: 'Saya sulit berkonsentrasi saat guru menjelaskan', category: 'Belajar' }, { id: 'dcm5', text: 'Saya merasa kurang percaya diri di depan umum', category: 'Pribadi' }, { id: 'dcm6', text: 'Saya sulit mengambil keputusan sendiri', category: 'Pribadi' }, { id: 'dcm7', text: 'Saya sulit bergaul dengan teman sebaya', category: 'Sosial' }, { id: 'dcm8', text: 'Saya merasa sering dikucilkan oleh teman', category: 'Sosial' }],
+    DCM: [
+        // A. KESEHATAN
+        { id: 'dcm-a1', text: 'Sering merasa lelah atau kurang bersemangat.', category: 'A. KESEHATAN' },
+        { id: 'dcm-a2', text: 'Sering sakit kepala atau pusing.', category: 'A. KESEHATAN' },
+        { id: 'dcm-a3', text: 'Penglihatan kurang jelas (mata minus/plus).', category: 'A. KESEHATAN' },
+        { id: 'dcm-a4', text: 'Pendengaran kurang tajam.', category: 'A. KESEHATAN' },
+        { id: 'dcm-a5', text: 'Sering menderita penyakit influenza/pilek.', category: 'A. KESEHATAN' },
+        { id: 'dcm-a6', text: 'Sering sakit gigi atau gusi.', category: 'A. KESEHATAN' },
+        { id: 'dcm-a7', text: 'Nafsu makan berkurang atau tidak teratur.', category: 'A. KESEHATAN' },
+        { id: 'dcm-a8', text: 'Sering merasa mual atau sakit perut.', category: 'A. KESEHATAN' },
+        { id: 'dcm-a9', text: 'Berat badan tidak stabil (terlalu kurus/gemuk).', category: 'A. KESEHATAN' },
+        { id: 'dcm-a10', text: 'Sering merasa sesak napas.', category: 'A. KESEHATAN' },
+        { id: 'dcm-a11', text: 'Sering merasa jantung berdebar-debar.', category: 'A. KESEHATAN' },
+        { id: 'dcm-a12', text: 'Sering merasa gugup atau gemetar.', category: 'A. KESEHATAN' },
+        { id: 'dcm-a13', text: 'Sering sulit tidur di malam hari.', category: 'A. KESEHATAN' },
+        { id: 'dcm-a14', text: 'Sering merasa mengantuk di siang hari.', category: 'A. KESEHATAN' },
+        { id: 'dcm-a15', text: 'Sering merasa gatal-gatal pada kulit.', category: 'A. KESEHATAN' },
+        { id: 'dcm-a16', text: 'Sering mengalami gangguan pencernaan.', category: 'A. KESEHATAN' },
+        { id: 'dcm-a17', text: 'Sering merasa lemas atau tidak bertenaga.', category: 'A. KESEHATAN' },
+        { id: 'dcm-a18', text: 'Memiliki penyakit kronis yang mengganggu.', category: 'A. KESEHATAN' },
+        { id: 'dcm-a19', text: 'Sering merasa haus atau lapar berlebihan.', category: 'A. KESEHATAN' },
+        { id: 'dcm-a20', text: 'Kurang berolahraga secara teratur.', category: 'A. KESEHATAN' },
+
+        // B. KEADAAN KEHIDUPAN EKONOMI
+        { id: 'dcm-b1', text: 'Uang saku harian kurang mencukupi kebutuhan.', category: 'B. KEADAAN KEHIDUPAN EKONOMI' },
+        { id: 'dcm-b2', text: 'Kesulitan membeli buku-buku pelajaran.', category: 'B. KEADAAN KEHIDUPAN EKONOMI' },
+        { id: 'dcm-b3', text: 'Ingin bekerja untuk menambah penghasilan sendiri.', category: 'B. KEADAAN KEHIDUPAN EKONOMI' },
+        { id: 'dcm-b4', text: 'Sering terlambat membayar iuran atau sumbangan sekolah.', category: 'B. KEADAAN KEHIDUPAN EKONOMI' },
+        { id: 'dcm-b5', text: 'Merasa rendah diri karena keadaan ekonomi keluarga.', category: 'B. KEADAAN KEHIDUPAN EKONOMI' },
+        { id: 'dcm-b6', text: 'Khawatir tentang masa depan pendidikan karena biaya.', category: 'B. KEADAAN KEHIDUPAN EKONOMI' },
+        { id: 'dcm-b7', text: 'Fasilitas belajar di rumah sangat terbatas.', category: 'B. KEADAAN KEHIDUPAN EKONOMI' },
+        { id: 'dcm-b8', text: 'Tidak memiliki pakaian seragam yang lengkap/layak.', category: 'B. KEADAAN KEHIDUPAN EKONOMI' },
+        { id: 'dcm-b9', text: 'Ingin membantu orang tua mencari nafkah.', category: 'B. KEADAAN KEHIDUPAN EKONOMI' },
+        { id: 'dcm-b10', text: 'Merasa iri dengan kemewahan yang dimiliki teman.', category: 'B. KEADAAN KEHIDUPAN EKONOMI' },
+        { id: 'dcm-b11', text: 'Sering tidak sarapan karena tidak ada biaya.', category: 'B. KEADAAN KEHIDUPAN EKONOMI' },
+        { id: 'dcm-b12', text: 'Kondisi rumah tempat tinggal kurang memadai.', category: 'B. KEADAAN KEHIDUPAN EKONOMI' },
+        { id: 'dcm-b13', text: 'Biaya transportasi ke sekolah terasa berat.', category: 'B. KEADAAN KEHIDUPAN EKONOMI' },
+        { id: 'dcm-b14', text: 'Tidak mampu mengikuti kegiatan sekolah yang berbayar.', category: 'B. KEADAAN KEHIDUPAN EKONOMI' },
+        { id: 'dcm-b15', text: 'Orang tua sering mengeluhkan masalah keuangan.', category: 'B. KEADAAN KEHIDUPAN EKONOMI' },
+        { id: 'dcm-b16', text: 'Memiliki tanggungan utang yang membebani.', category: 'B. KEADAAN KEHIDUPAN EKONOMI' },
+        { id: 'dcm-b17', text: 'Sering merasa malu dengan kondisi ekonomi keluarga.', category: 'B. KEADAAN KEHIDUPAN EKONOMI' },
+        { id: 'dcm-b18', text: 'Tidak memiliki tabungan untuk keperluan mendadak.', category: 'B. KEADAAN KEHIDUPAN EKONOMI' },
+        { id: 'dcm-b19', text: 'Sering merasa tertekan karena tuntutan ekonomi.', category: 'B. KEADAAN KEHIDUPAN EKONOMI' },
+        { id: 'dcm-b20', text: 'Orang tua tidak memiliki pekerjaan atau penghasilan tetap.', category: 'B. KEADAAN KEHIDUPAN EKONOMI' },
+
+        // C. REKREASI / HOBI DENGAN WAKTU LUANG
+        { id: 'dcm-c1', text: 'Hampir tidak mempunyai waktu untuk bermain/rekreasi.', category: 'C. REKREASI / HOBI DENGAN WAKTU LUANG' },
+        { id: 'dcm-c2', text: 'Waktu luang habis untuk bekerja membantu orang tua.', category: 'C. REKREASI / HOBI DENGAN WAKTU LUANG' },
+        { id: 'dcm-c3', text: 'Tidak tahu bagaimana cara mengisi waktu luang.', category: 'C. REKREASI / HOBI DENGAN WAKTU LUANG' },
+        { id: 'dcm-c4', text: 'Tidak memiliki hobi atau kegemaran tertentu.', category: 'C. REKREASI / HOBI DENGAN WAKTU LUANG' },
+        { id: 'dcm-c5', text: 'Ingin menyalurkan hobi tetapi tidak ada biaya.', category: 'C. REKREASI / HOBI DENGAN WAKTU LUANG' },
+        { id: 'dcm-c6', text: 'Kurang mendapat kesempatan untuk berekreasi.', category: 'C. REKREASI / HOBI DENGAN WAKTU LUANG' },
+        { id: 'dcm-c7', text: 'Waktu luang sering terbuang sia-sia tanpa kegiatan.', category: 'C. REKREASI / HOBI DENGAN WAKTU LUANG' },
+        { id: 'dcm-c8', text: 'Terlalu banyak waktu digunakan untuk menonton TV/HP.', category: 'C. REKREASI / HOBI DENGAN WAKTU LUANG' },
+        { id: 'dcm-c9', text: 'Merasa bosan dengan kegiatan sehari-hari yang monoton.', category: 'C. REKREASI / HOBI DENGAN WAKTU LUANG' },
+        { id: 'dcm-c10', text: 'Ingin mengikuti kegiatan ekstrakurikuler tetapi dilarang.', category: 'C. REKREASI / HOBI DENGAN WAKTU LUANG' },
+        { id: 'dcm-c11', text: 'Tidak ada fasilitas rekreasi di lingkungan tempat tinggal.', category: 'C. REKREASI / HOBI DENGAN WAKTU LUANG' },
+        { id: 'dcm-c12', text: 'Sering merasa jenuh dengan tugas-tugas sekolah.', category: 'C. REKREASI / HOBI DENGAN WAKTU LUANG' },
+        { id: 'dcm-c13', text: 'Kurang berani mencoba hal-hal baru yang positif.', category: 'C. REKREASI / HOBI DENGAN WAKTU LUANG' },
+        { id: 'dcm-c14', text: 'Waktu istirahat sering terganggu oleh kegiatan lain.', category: 'C. REKREASI / HOBI DENGAN WAKTU LUANG' },
+        { id: 'dcm-c15', text: 'Ingin berlibur tetapi tidak pernah ada kesempatan.', category: 'C. REKREASI / HOBI DENGAN WAKTU LUANG' },
+        { id: 'dcm-c16', text: 'Merasa tidak bebas melakukan hobi yang disukai.', category: 'C. REKREASI / HOBI DENGAN WAKTU LUANG' },
+        { id: 'dcm-c17', text: 'Tidak memiliki teman untuk menyalurkan hobi bersama.', category: 'C. REKREASI / HOBI DENGAN WAKTU LUANG' },
+        { id: 'dcm-c18', text: 'Sering merasa malas untuk melakukan kegiatan bermanfaat.', category: 'C. REKREASI / HOBI DENGAN WAKTU LUANG' },
+        { id: 'dcm-c19', text: 'Waktu luang habis untuk membantu pekerjaan rumah.', category: 'C. REKREASI / HOBI DENGAN WAKTU LUANG' },
+        { id: 'dcm-c20', text: 'Merasa kurang mendapat hiburan yang mendidik.', category: 'C. REKREASI / HOBI DENGAN WAKTU LUANG' },
+
+        // D. KEHIDUPAN SOSIAL KEAKTIFAN BERORGANISASI
+        { id: 'dcm-d1', text: 'Sulit bergaul atau memulai percakapan dengan orang baru.', category: 'D. KEHIDUPAN SOSIAL KEAKTIFAN BERORGANISASI' },
+        { id: 'dcm-d2', text: 'Sering merasa malu atau canggung di depan umum.', category: 'D. KEHIDUPAN SOSIAL KEAKTIFAN BERORGANISASI' },
+        { id: 'dcm-d3', text: 'Merasa sulit menyesuaikan diri dalam kelompok.', category: 'D. KEHIDUPAN SOSIAL KEAKTIFAN BERORGANISASI' },
+        { id: 'dcm-d4', text: 'Jarang dilibatkan dalam kegiatan kelompok oleh teman.', category: 'D. KEHIDUPAN SOSIAL KEAKTIFAN BERORGANISASI' },
+        { id: 'dcm-d5', text: 'Sering merasa dikucilkan atau tidak disukai teman.', category: 'D. KEHIDUPAN SOSIAL KEAKTIFAN BERORGANISASI' },
+        { id: 'dcm-d6', text: 'Takut mengemukakan pendapat di depan orang banyak.', category: 'D. KEHIDUPAN SOSIAL KEAKTIFAN BERORGANISASI' },
+        { id: 'dcm-d7', text: 'Sulit bekerja sama dalam sebuah tim atau organisasi.', category: 'D. KEHIDUPAN SOSIAL KEAKTIFAN BERORGANISASI' },
+        { id: 'dcm-d8', text: 'Tidak tertarik mengikuti kegiatan organisasi di sekolah.', category: 'D. KEHIDUPAN SOSIAL KEAKTIFAN BERORGANISASI' },
+        { id: 'dcm-d9', text: 'Merasa tidak memiliki kemampuan untuk memimpin.', category: 'D. KEHIDUPAN SOSIAL KEAKTIFAN BERORGANISASI' },
+        { id: 'dcm-d10', text: 'Sering terjadi kesalahpahaman dengan teman sebaya.', category: 'D. KEHIDUPAN SOSIAL KEAKTIFAN BERORGANISASI' },
+        { id: 'dcm-d11', text: 'Merasa minder dalam pergaulan sosial di sekolah.', category: 'D. KEHIDUPAN SOSIAL KEAKTIFAN BERORGANISASI' },
+        { id: 'dcm-d12', text: 'Sulit mempercayai orang lain atau teman dekat.', category: 'D. KEHIDUPAN SOSIAL KEAKTIFAN BERORGANISASI' },
+        { id: 'dcm-d13', text: 'Sering merasa sepi meskipun berada di tengah keramaian.', category: 'D. KEHIDUPAN SOSIAL KEAKTIFAN BERORGANISASI' },
+        { id: 'dcm-d14', text: 'Merasa tertekan oleh aturan-aturan dalam kelompok.', category: 'D. KEHIDUPAN SOSIAL KEAKTIFAN BERORGANISASI' },
+        { id: 'dcm-d15', text: 'Tidak berani menolak ajakan teman yang kurang baik.', category: 'D. KEHIDUPAN SOSIAL KEAKTIFAN BERORGANISASI' },
+        { id: 'dcm-d16', text: 'Sering merasa ragu untuk meminta bantuan orang lain.', category: 'D. KEHIDUPAN SOSIAL KEAKTIFAN BERORGANISASI' },
+        { id: 'dcm-d17', text: 'Merasa kurang dihargai oleh teman-teman sekelas.', category: 'D. KEHIDUPAN SOSIAL KEAKTIFAN BERORGANISASI' },
+        { id: 'dcm-d18', text: 'Sulit mengendalikan emosi saat berinteraksi sosial.', category: 'D. KEHIDUPAN SOSIAL KEAKTIFAN BERORGANISASI' },
+        { id: 'dcm-d19', text: 'Merasa tidak punya teman akrab tempat berkeluh kesah.', category: 'D. KEHIDUPAN SOSIAL KEAKTIFAN BERORGANISASI' },
+        { id: 'dcm-d20', text: 'Terlalu pemalu untuk ikut serta dalam kegiatan bersama.', category: 'D. KEHIDUPAN SOSIAL KEAKTIFAN BERORGANISASI' },
+
+        // E. HUBUNGAN PRIBADI
+        { id: 'dcm-e1', text: 'Sering merasa rendah diri atau kurang percaya diri.', category: 'E. HUBUNGAN PRIBADI' },
+        { id: 'dcm-e2', text: 'Sulit mengambil keputusan untuk diri sendiri.', category: 'E. HUBUNGAN PRIBADI' },
+        { id: 'dcm-e3', text: 'Sering merasa sedih tanpa alasan yang jelas.', category: 'E. HUBUNGAN PRIBADI' },
+        { id: 'dcm-e4', text: 'Merasa putus asa dalam menghadapi masalah hidup.', category: 'E. HUBUNGAN PRIBADI' },
+        { id: 'dcm-e5', text: 'Sering merasa cemas atau khawatir berlebihan.', category: 'E. HUBUNGAN PRIBADI' },
+        { id: 'dcm-e6', text: 'Sulit mengendalikan amarah atau emosi yang meledak.', category: 'E. HUBUNGAN PRIBADI' },
+        { id: 'dcm-e7', text: 'Merasa tidak memiliki kelebihan atau bakat apa pun.', category: 'E. HUBUNGAN PRIBADI' },
+        { id: 'dcm-e8', text: 'Sering menyalahkan diri sendiri atas kegagalan.', category: 'E. HUBUNGAN PRIBADI' },
+        { id: 'dcm-e9', text: 'Merasa hidup ini tidak adil bagi diri saya.', category: 'E. HUBUNGAN PRIBADI' },
+        { id: 'dcm-e10', text: 'Sulit untuk jujur pada diri sendiri tentang perasaan.', category: 'E. HUBUNGAN PRIBADI' },
+        { id: 'dcm-e11', text: 'Sering merasa bingung dengan tujuan hidup saya.', category: 'E. HUBUNGAN PRIBADI' },
+        { id: 'dcm-e12', text: 'Merasa tidak ada orang yang benar-benar memahami saya.', category: 'E. HUBUNGAN PRIBADI' },
+        { id: 'dcm-e13', text: 'Sering melamun atau berkhayal tentang hal yang mustahil.', category: 'E. HUBUNGAN PRIBADI' },
+        { id: 'dcm-e14', text: 'Merasa takut menghadapi masa depan yang belum pasti.', category: 'E. HUBUNGAN PRIBADI' },
+        { id: 'dcm-e15', text: 'Sulit untuk memaafkan kesalahan diri sendiri di masa lalu.', category: 'E. HUBUNGAN PRIBADI' },
+        { id: 'dcm-e16', text: 'Merasa tidak puas dengan penampilan fisik saya.', category: 'E. HUBUNGAN PRIBADI' },
+        { id: 'dcm-e17', text: 'Sering merasa kesepian dan ingin menarik diri.', category: 'E. HUBUNGAN PRIBADI' },
+        { id: 'dcm-e18', text: 'Merasa terbebani oleh harapan orang lain pada saya.', category: 'E. HUBUNGAN PRIBADI' },
+        { id: 'dcm-e19', text: 'Sulit untuk tetap konsisten dengan prinsip sendiri.', category: 'E. HUBUNGAN PRIBADI' },
+        { id: 'dcm-e20', text: 'Merasa tidak sanggup menghadapi tekanan hidup.', category: 'E. HUBUNGAN PRIBADI' },
+
+        // F. MUDA-MUDI
+        { id: 'dcm-f1', text: 'Sering merasa malu jika berhadapan dengan lawan jenis.', category: 'F. MUDA-MUDI' },
+        { id: 'dcm-f2', text: 'Merasa bingung bagaimana bersikap di depan lawan jenis.', category: 'F. MUDA-MUDI' },
+        { id: 'dcm-f3', text: 'Ingin memiliki pacar tetapi merasa tidak ada yang suka.', category: 'F. MUDA-MUDI' },
+        { id: 'dcm-f4', text: 'Sering patah hati atau kecewa dalam urusan asmara.', category: 'F. MUDA-MUDI' },
+        { id: 'dcm-f5', text: 'Merasa terganggu oleh godaan dari lawan jenis.', category: 'F. MUDA-MUDI' },
+        { id: 'dcm-f6', text: 'Bingung membedakan antara rasa suka dan cinta sejati.', category: 'F. MUDA-MUDI' },
+        { id: 'dcm-f7', text: 'Sering merasa cemburu yang berlebihan pada seseorang.', category: 'F. MUDA-MUDI' },
+        { id: 'dcm-f8', text: 'Takut mengungkapkan perasaan pada orang yang disukai.', category: 'F. MUDA-MUDI' },
+        { id: 'dcm-f9', text: 'Merasa tertekan oleh pergaulan bebas di lingkungan.', category: 'F. MUDA-MUDI' },
+        { id: 'dcm-f10', text: 'Sering memikirkan masalah pacaran hingga lupa belajar.', category: 'F. MUDA-MUDI' },
+        { id: 'dcm-f11', text: 'Orang tua melarang berhubungan dengan lawan jenis.', category: 'F. MUDA-MUDI' },
+        { id: 'dcm-f12', text: 'Sering merasa minder dibandingkan teman yang populer.', category: 'F. MUDA-MUDI' },
+        { id: 'dcm-f13', text: 'Merasa tidak tahu etika pergaulan yang benar.', category: 'F. MUDA-MUDI' },
+        { id: 'dcm-f14', text: 'Khawatir dengan perubahan fisik di masa remaja ini.', category: 'F. MUDA-MUDI' },
+        { id: 'dcm-f15', text: 'Sering merasa bimbang dalam memilih teman dekat.', category: 'F. MUDA-MUDI' },
+        { id: 'dcm-f16', text: 'Merasa terbebani oleh standar kecantikan/ketampanan.', category: 'F. MUDA-MUDI' },
+        { id: 'dcm-f17', text: 'Sering merasa iri melihat teman yang sudah berpasangan.', category: 'F. MUDA-MUDI' },
+        { id: 'dcm-f18', text: 'Sulit mengendalikan keinginan untuk selalu diperhatikan.', category: 'F. MUDA-MUDI' },
+        { id: 'dcm-f19', text: 'Merasa tidak nyaman dengan pembicaraan seputar seks.', category: 'F. MUDA-MUDI' },
+        { id: 'dcm-f20', text: 'Bingung menghadapi tuntutan pergaulan remaja masa kini.', category: 'F. MUDA-MUDI' },
+
+        // G. KEHIDUPAN KELUARGA
+        { id: 'dcm-g1', text: 'Hubungan dengan orang tua kurang harmonis/sering cekcok.', category: 'G. KEHIDUPAN KELUARGA' },
+        { id: 'dcm-g2', text: 'Orang tua terlalu mengekang kebebasan saya.', category: 'G. KEHIDUPAN KELUARGA' },
+        { id: 'dcm-g3', text: 'Sering merasa kurang perhatian dan kasih sayang di rumah.', category: 'G. KEHIDUPAN KELUARGA' },
+        { id: 'dcm-g4', text: 'Orang tua sering bertengkar di depan anak-anak.', category: 'G. KEHIDUPAN KELUARGA' },
+        { id: 'dcm-g5', text: 'Merasa dibeda-bedakan dengan saudara kandung lainnya.', category: 'G. KEHIDUPAN KELUARGA' },
+        { id: 'dcm-g6', text: 'Keadaan rumah tangga yang berantakan (broken home).', category: 'G. KEHIDUPAN KELUARGA' },
+        { id: 'dcm-g7', text: 'Orang tua terlalu sibuk sehingga jarang ada waktu bersama.', category: 'G. KEHIDUPAN KELUARGA' },
+        { id: 'dcm-g8', text: 'Merasa tertekan oleh tuntutan orang tua yang terlalu tinggi.', category: 'G. KEHIDUPAN KELUARGA' },
+        { id: 'dcm-g9', text: 'Sering merasa takut atau tidak nyaman berada di rumah.', category: 'G. KEHIDUPAN KELUARGA' },
+        { id: 'dcm-g10', text: 'Hubungan dengan saudara (kakak/adik) sering tidak akur.', category: 'G. KEHIDUPAN KELUARGA' },
+        { id: 'dcm-g11', text: 'Orang tua tidak memahami keinginan atau cita-cita saya.', category: 'G. KEHIDUPAN KELUARGA' },
+        { id: 'dcm-g12', text: 'Sering merasa malu with kondisi keluarga saya.', category: 'G. KEHIDUPAN KELUARGA' },
+        { id: 'dcm-g13', text: 'Ada anggota keluarga yang memiliki kebiasaan buruk.', category: 'G. KEHIDUPAN KELUARGA' },
+        { id: 'dcm-g14', text: 'Merasa tidak betah tinggal di rumah karena suasana bising.', category: 'G. KEHIDUPAN KELUARGA' },
+        { id: 'dcm-g15', text: 'Kurangnya komunikasi yang terbuka dalam keluarga.', category: 'G. KEHIDUPAN KELUARGA' },
+        { id: 'dcm-g16', text: 'Orang tua terlalu keras dalam mendidik atau menghukum.', category: 'G. KEHIDUPAN KELUARGA' },
+        { id: 'dcm-g17', text: 'Merasa dibebani terlalu banyak pekerjaan rumah tangga.', category: 'G. KEHIDUPAN KELUARGA' },
+        { id: 'dcm-g18', text: 'Ingin hidup mandiri and lepas dari ketergantungan keluarga.', category: 'G. KEHIDUPAN KELUARGA' },
+        { id: 'dcm-g19', text: 'Sering merasa tidak dihargai pendapatnya oleh orang tua.', category: 'G. KEHIDUPAN KELUARGA' },
+        { id: 'dcm-g20', text: 'Khawatir dengan masa depan keluarga yang tidak pasti.', category: 'G. KEHIDUPAN KELUARGA' },
+
+        // H. AGAMA DAN MORAL
+        { id: 'dcm-h1', text: 'Merasa malas untuk melaksanakan ibadah wajib.', category: 'H. AGAMA DAN MORAL' },
+        { id: 'dcm-h2', text: 'Sering melanggar norma atau aturan agama yang berlaku.', category: 'H. AGAMA DAN MORAL' },
+        { id: 'dcm-h3', text: 'Merasa ragu dengan kebenaran ajaran agama tertentu.', category: 'H. AGAMA DAN MORAL' },
+        { id: 'dcm-h4', text: 'Sering melakukan perbuatan yang dilarang oleh agama.', category: 'H. AGAMA DAN MORAL' },
+        { id: 'dcm-h5', text: 'Merasa kurang mendapat pendidikan agama dari orang tua.', category: 'H. AGAMA DAN MORAL' },
+        { id: 'dcm-h6', text: 'Sulit untuk bersikap jujur dalam perkataan and perbuatan.', category: 'H. AGAMA DAN MORAL' },
+        { id: 'dcm-h7', text: 'Sering merasa berdosa tetapi sulit untuk berubah.', category: 'H. AGAMA DAN MORAL' },
+        { id: 'dcm-h8', text: 'Merasa acuh tak acuh terhadap kegiatan keagamaan.', category: 'H. AGAMA DAN MORAL' },
+        { id: 'dcm-h9', text: 'Terpengaruh oleh pergaulan yang mengabaikan nilai moral.', category: 'H. AGAMA DAN MORAL' },
+        { id: 'dcm-h10', text: 'Bingung membedakan mana yang benar dan salah.', category: 'H. AGAMA DAN MORAL' },
+        { id: 'dcm-h11', text: 'Sering merasa tertekan oleh aturan agama yang ketat.', category: 'H. AGAMA DAN MORAL' },
+        { id: 'dcm-h12', text: 'Merasa iri melihat orang lain yang lebih taat beribadah.', category: 'H. AGAMA DAN MORAL' },
+        { id: 'dcm-h13', text: 'Sering berkata kasar atau tidak sopan kepada orang lain.', category: 'H. AGAMA DAN MORAL' },
+        { id: 'dcm-h14', text: 'Merasa tidak tenang karena sering berbohong.', category: 'H. AGAMA DAN MORAL' },
+        { id: 'dcm-h15', text: 'Sulit untuk memaafkan kesalahan orang lain pada saya.', category: 'H. AGAMA DAN MORAL' },
+        { id: 'dcm-h16', text: 'Merasa tidak ada gunanya berbuat baik di dunia ini.', category: 'H. AGAMA DAN MORAL' },
+        { id: 'dcm-h17', text: 'Sering meremehkan nasihat-nasihat tentang kebaikan.', category: 'H. AGAMA DAN MORAL' },
+        { id: 'dcm-h18', text: 'Merasa tidak memiliki pegangan hidup yang kuat.', category: 'H. AGAMA DAN MORAL' },
+        { id: 'dcm-h19', text: 'Sering merasa godaan untuk melakukan maksiat sangat besar.', category: 'H. AGAMA DAN MORAL' },
+        { id: 'dcm-h20', text: 'Ingin memperdalam agama tetapi tidak tahu caranya.', category: 'H. AGAMA DAN MORAL' },
+
+        // I. PENYESUAIAN TERHADAP SEKOLAH
+        { id: 'dcm-i1', text: 'Merasa tidak betah atau tidak nyaman berada di sekolah.', category: 'I. PENYESUAIAN TERHADAP SEKOLAH' },
+        { id: 'dcm-i2', text: 'Sering merasa takut kepada guru atau staf sekolah.', category: 'I. PENYESUAIAN TERHADAP SEKOLAH' },
+        { id: 'dcm-i3', text: 'Sulit mematuhi tata tertib atau peraturan sekolah.', category: 'I. PENYESUAIAN TERHADAP SEKOLAH' },
+        { id: 'dcm-i4', text: 'Merasa fasilitas sekolah kurang mendukung proses belajar.', category: 'I. PENYESUAIAN TERHADAP SEKOLAH' },
+        { id: 'dcm-i5', text: 'Sering merasa bosan with suasana kelas yang monoton.', category: 'I. PENYESUAIAN TERHADAP SEKOLAH' },
+        { id: 'dcm-i6', text: 'Merasa tidak cocok with lingkungan pergaulan di sekolah.', category: 'I. PENYESUAIAN TERHADAP SEKOLAH' },
+        { id: 'dcm-i7', text: 'Sering datang terlambat atau ingin membolos sekolah.', category: 'I. PENYESUAIAN TERHADAP SEKOLAH' },
+        { id: 'dcm-i8', text: 'Merasa tertekan oleh beban tugas yang terlalu banyak.', category: 'I. PENYESUAIAN TERHADAP SEKOLAH' },
+        { id: 'dcm-i9', text: 'Sulit untuk aktif dalam kegiatan ekstrakurikuler sekolah.', category: 'I. PENYESUAIAN TERHADAP SEKOLAH' },
+        { id: 'dcm-i10', text: 'Merasa kurang mendapatkan perhatian dari guru pembimbing.', category: 'I. PENYESUAIAN TERHADAP SEKOLAH' },
+        { id: 'dcm-i11', text: 'Sering merasa minder with prestasi teman sekelas.', category: 'I. PENYESUAIAN TERHADAP SEKOLAH' },
+        { id: 'dcm-i12', text: 'Merasa salah memilih sekolah atau jurusan saat ini.', category: 'I. PENYESUAIAN TERHADAP SEKOLAH' },
+        { id: 'dcm-i13', text: 'Hubungan with beberapa guru terasa kurang baik.', category: 'I. PENYESUAIAN TERHADAP SEKOLAH' },
+        { id: 'dcm-i14', text: 'Merasa suasana sekolah terlalu kompetitif and melelahkan.', category: 'I. PENYESUAIAN TERHADAP SEKOLAH' },
+        { id: 'dcm-i15', text: 'Sering merasa tidak dihargai usaha atau prestasi saya.', category: 'I. PENYESUAIAN TERHADAP SEKOLAH' },
+        { id: 'dcm-i16', text: 'Takut menghadapi ujian atau penilaian di sekolah.', category: 'I. PENYESUAIAN TERHADAP SEKOLAH' },
+        { id: 'dcm-i17', text: 'Merasa tidak punya teman akrab di lingkungan sekolah.', category: 'I. PENYESUAIAN TERHADAP SEKOLAH' },
+        { id: 'dcm-i18', text: 'Sering merasa bingung with sistem administrasi sekolah.', category: 'I. PENYESUAIAN TERHADAP SEKOLAH' },
+        { id: 'dcm-i19', text: 'Merasa kantin atau tempat istirahat kurang memadai.', category: 'I. PENYESUAIAN TERHADAP SEKOLAH' },
+        { id: 'dcm-i20', text: 'Ingin segera lulus karena merasa tidak nyaman belajar.', category: 'I. PENYESUAIAN TERHADAP SEKOLAH' },
+
+        // J. PENYESUAIAN TERHADAP KURIKULUM
+        { id: 'dcm-j1', text: 'Sulit memahami materi pelajaran yang disampaikan guru.', category: 'J. PENYESUAIAN TERHADAP KURIKULUM' },
+        { id: 'dcm-j2', text: 'Merasa kurikulum saat ini terlalu berat bagi kemampuan saya.', category: 'J. PENYESUAIAN TERHADAP KURIKULUM' },
+        { id: 'dcm-j3', text: 'Tidak menyukai beberapa mata pelajaran tertentu.', category: 'J. PENYESUAIAN TERHADAP KURIKULUM' },
+        { id: 'dcm-j4', text: 'Sering merasa bingung with cara mengajar guru di kelas.', category: 'J. PENYESUAIAN TERHADAP KURIKULUM' },
+        { id: 'dcm-j5', text: 'Sulit berkonsentrasi saat penjelasan materi yang sulit.', category: 'J. PENYESUAIAN TERHADAP KURIKULUM' },
+        { id: 'dcm-j6', text: 'Merasa waktu belajar di sekolah terlalu lama and melelahkan.', category: 'J. PENYESUAIAN TERHADAP KURIKULUM' },
+        { id: 'dcm-j7', text: 'Tidak memiliki buku sumber atau referensi yang lengkap.', category: 'J. PENYESUAIAN TERHADAP KURIKULUM' },
+        { id: 'dcm-j8', text: 'Sering gagal mendapatkan nilai di atas batas ketuntasan.', category: 'J. PENYESUAIAN TERHADAP KURIKULUM' },
+        { id: 'dcm-j9', text: 'Merasa metode pembelajaran kurang menarik atau membosankan.', category: 'J. PENYESUAIAN TERHADAP KURIKULUM' },
+        { id: 'dcm-j10', text: 'Sulit mengerjakan tugas-tugas mandiri yang diberikan.', category: 'J. PENYESUAIAN TERHADAP KURIKULUM' },
+        { id: 'dcm-j11', text: 'Merasa materi pelajaran tidak relevan with masa depan.', category: 'J. PENYESUAIAN TERHADAP KURIKULUM' },
+        { id: 'dcm-j12', text: 'Sering merasa cemas jika ada tugas kelompok yang sulit.', category: 'J. PENYESUAIAN TERHADAP KURIKULUM' },
+        { id: 'dcm-j13', text: 'Tidak berani bertanya saat tidak paham materi pelajaran.', category: 'J. PENYESUAIAN TERHADAP KURIKULUM' },
+        { id: 'dcm-j14', text: 'Merasa tertinggal jauh dibandingkan teman-teman lainnya.', category: 'J. PENYESUAIAN TERHADAP KURIKULUM' },
+        { id: 'dcm-j15', text: 'Sulit mengatur waktu belajar yang efektif di rumah.', category: 'J. PENYESUAIAN TERHADAP KURIKULUM' },
+        { id: 'dcm-j16', text: 'Merasa terlalu banyak hafalan yang harus dikuasai.', category: 'J. PENYESUAIAN TERHADAP KURIKULUM' },
+        { id: 'dcm-j17', text: 'Sering merasa mengantuk saat pelajaran berlangsung.', category: 'J. PENYESUAIAN TERHADAP KURIKULUM' },
+        { id: 'dcm-j18', text: 'Tidak menyukai sistem penilaian yang diterapkan saat ini.', category: 'J. PENYESUAIAN TERHADAP KURIKULUM' },
+        { id: 'dcm-j19', text: 'Merasa kurang bimbingan dalam menghadapi materi sulit.', category: 'J. PENYESUAIAN TERHADAP KURIKULUM' },
+        { id: 'dcm-j20', text: 'Ingin kurikulum yang lebih fleksibel and menyenangkan.', category: 'J. PENYESUAIAN TERHADAP KURIKULUM' }
+    ],
     Potensi: [{ id: 'pot1', text: 'Saya senang memimpin dalam kegiatan kelompok', category: 'Kepemimpinan' }, { id: 'pot2', text: 'Saya mampu mempengaruhi orang lain untuk tujuan baik', category: 'Kepemimpinan' }, { id: 'pot3', text: 'Saya senang memecahkan masalah matematika/logika', category: 'Intelektual' }, { id: 'pot4', text: 'Saya cepat memahami materi baru yang bersifat teoritis', category: 'Intelektual' }, { id: 'pot5', text: 'Saya senang menggambar atau membuat kerajinan tangan', category: 'Kreativitas' }, { id: 'pot6', text: 'Saya sering memiliki ide-ide baru yang tidak terpikirkan orang lain', category: 'Kreativitas' }],
     Minat: [{ id: 'min1', text: 'Saya tertarik dengan pekerjaan di bidang teknologi', category: 'Teknologi' }, { id: 'min2', text: 'Saya senang mencoba perangkat lunak atau gadget baru', category: 'Teknologi' }, { id: 'min3', text: 'Saya senang membantu orang lain yang sedang kesulitan', category: 'Sosial' }, { id: 'min4', text: 'Saya tertarik menjadi tenaga kesehatan atau pengajar', category: 'Sosial' }, { id: 'min5', text: 'Saya senang tampil di atas panggung (menyanyi/akting)', category: 'Seni' }, { id: 'min6', text: 'Saya tertarik dengan dunia desain atau musik', category: 'Seni' }],
     Gaya: [{ id: 'gay1', text: 'Saya lebih mudah ingat jika melihat gambar/diagram', category: 'Visual' }, { id: 'gay2', text: 'Saya lebih suka membaca petunjuk tertulis daripada mendengarkan', category: 'Visual' }, { id: 'gay3', text: 'Saya lebih mudah ingat jika mendengarkan penjelasan langsung', category: 'Auditori' }, { id: 'gay4', text: 'Saya sering berbicara sendiri saat sedang belajar', category: 'Auditori' }, { id: 'gay5', text: 'Saya tidak bisa diam saat sedang belajar (suka bergerak)', category: 'Kinestetik' }, { id: 'gay6', text: 'Saya lebih mudah paham jika langsung mempraktikkan materi', category: 'Kinestetik' }]
@@ -173,7 +393,31 @@ function startInstrumen(type) {
     const questions = dataPertanyaan.filter(p => p.Instrumen === type).length ? dataPertanyaan.filter(p => p.Instrumen === type).map(p => ({ id: p.ID, text: p.Pertanyaan, category: p.Kategori })) : DEFAULT_QUESTIONS[type];
     document.getElementById('instrumen-form-container').classList.remove('d-none');
     document.getElementById('instrumen-form-title').innerText = `Isi Instrumen: ${type}`;
-    document.getElementById('instrumen-questions-list').innerHTML = questions.map((q, i) => `<div class="mb-4 p-3 border rounded bg-light"><p class="fw-bold mb-2">${i + 1}. ${q.text}</p><div class="d-flex gap-4"><div class="form-check"><input class="form-check-input" type="radio" name="q-${q.id}" id="${q.id}-ya" value="Ya" required><label class="form-check-label" for="${q.id}-ya">Ya</label></div><div class="form-check"><input class="form-check-input" type="radio" name="q-${q.id}" id="${q.id}-tidak" value="Tidak" required><label class="form-check-label" for="${q.id}-tidak">Tidak</label></div></div></div>`).join('');
+
+    let html = '';
+    let currentCategory = '';
+
+    questions.forEach((q, i) => {
+        if (q.category && q.category !== currentCategory) {
+            currentCategory = q.category;
+            html += `<div class="category-header mt-4 mb-3 p-2 bg-primary text-white rounded"><h5>Bidang: ${currentCategory}</h5></div>`;
+        }
+        html += `<div class="mb-3 p-3 border rounded bg-light shadow-sm">
+            <p class="fw-bold mb-2">${i + 1}. ${q.text}</p>
+            <div class="d-flex gap-4">
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="q-${q.id}" id="${q.id}-ya" value="Ya" required>
+                    <label class="form-check-label" for="${q.id}-ya">Ya</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="q-${q.id}" id="${q.id}-tidak" value="Tidak" required>
+                    <label class="form-check-label" for="${q.id}-tidak">Tidak</label>
+                </div>
+            </div>
+        </div>`;
+    });
+
+    document.getElementById('instrumen-questions-list').innerHTML = html;
     window.scrollTo(0, document.getElementById('instrumen-form-container').offsetTop);
 }
 
