@@ -64,3 +64,22 @@ tbody tr:hover {
     background-color: rgba(78, 115, 223, 0.05);
 }
 
+/* Pengaturan Kop Surat */
+#kop-preview-container {
+    min-height: 150px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+#preview-image-container img, 
+.kop-surat-img {
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+    -ms-interpolation-mode: bicubic;
+    max-width: 100%;
+    height: auto;
+    object-fit: contain;
+}
+
