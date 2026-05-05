@@ -595,23 +595,51 @@ const toggleLoginFields = () => {
 };
 
 function previewKop(input) {
-    const container = document.getElementById('kop-preview-container');
-    const img = document.getElementById('kop-preview-img');
+    const imgContainer = document.getElementById('preview-image-container');
+    const textContainer = document.getElementById('preview-text-container');
     if (input.files && input.files[0]) {
         const reader = new FileReader();
         reader.onload = (e) => {
-            img.src = e.target.result;
-            container.classList.remove('d-none');
+            imgContainer.innerHTML = `<img src="${e.target.result}" class="img-fluid" style="max-height: 120px;">`;
+            textContainer.classList.add('d-none');
         };
         reader.readAsDataURL(input.files[0]);
     } else {
-        container.classList.add('d-none');
+        imgContainer.innerHTML = '';
+        textContainer.classList.remove('d-none');
+        updateKopPreviewText();
     }
 }
 
+function updateKopPreviewText() {
+    const name = document.getElementById('setting-school-name').value || 'Nama Sekolah';
+    const previewName = document.getElementById('preview-school-name');
+    if (previewName) previewName.innerText = name;
+}
+
 const loadSettingsToForm = () => {
-    ['setting-school-name', 'setting-academic-year'].forEach(id => document.getElementById(id).value = appSettings[id.includes('school') ? 'SchoolName' : 'AcademicYear'] || '');
-    if (appSettings.KopSurat) { document.getElementById('kop-preview-img').src = appSettings.KopSurat; document.getElementById('kop-preview-container').classList.remove('d-none'); }
+    const schoolNameInput = document.getElementById('setting-school-name');
+    const academicYearInput = document.getElementById('setting-academic-year');
+    const imgContainer = document.getElementById('preview-image-container');
+    const textContainer = document.getElementById('preview-text-container');
+    
+    if (!schoolNameInput || !academicYearInput) return;
+
+    schoolNameInput.value = appSettings.SchoolName || '';
+    academicYearInput.value = appSettings.AcademicYear || '';
+
+    // Add event listener for real-time name preview
+    schoolNameInput.removeEventListener('input', updateKopPreviewText);
+    schoolNameInput.addEventListener('input', updateKopPreviewText);
+
+    if (appSettings.KopSurat) {
+        imgContainer.innerHTML = `<img src="${appSettings.KopSurat}" class="img-fluid" style="max-height: 120px;">`;
+        textContainer.classList.add('d-none');
+    } else {
+        imgContainer.innerHTML = '';
+        textContainer.classList.remove('d-none');
+        updateKopPreviewText();
+    }
 };
 
 async function handleSaveSettings(e) {
@@ -621,16 +649,24 @@ async function handleSaveSettings(e) {
         AcademicYear: document.getElementById('setting-academic-year').value
     };
 
-    // Handle Kop Surat image if visible
-    const kopImg = document.getElementById('kop-preview-img');
-    if (kopImg.src && !kopImg.src.startsWith('http')) {
+    // Handle Kop Surat image
+    const kopImg = document.getElementById('preview-image-container').querySelector('img');
+    if (kopImg) {
+        // Simpan hanya jika itu base64 (baru upload) atau jika kita ingin memastikan tersimpan
+        // Untuk amannya, kita kirim saja src-nya jika ada
         s.KopSurat = kopImg.src;
+    } else {
+        s.KopSurat = ''; // Hapus jika tidak ada gambar
     }
 
     const pass = document.getElementById('setting-admin-pass').value;
     if (pass) s.AdminPass = pass;
+    
     const res = await callAPI('updateSettings', { settings: s });
-    if (res.success) { alert('Tersimpan!'); refreshData(); }
+    if (res.success) { 
+        alert('Pengaturan berhasil disimpan!'); 
+        refreshData(true); // Force refresh
+    }
 }
 
 async function openModalSiswa() { document.getElementById('form-siswa').reset(); document.getElementById('siswa-id').value = ''; new bootstrap.Modal(document.getElementById('modalSiswa')).show(); }
