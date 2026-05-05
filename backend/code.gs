@@ -202,8 +202,12 @@ function updateSettings(newSettings) {
   const settingsMap = new Map(values.map((r, i) => [r[0], i]));
   
   for (const [key, val] of Object.entries(newSettings)) {
-    if (settingsMap.has(key)) sheet.getRange(settingsMap.get(key) + 1, 2).setValue(val);
-    else sheet.appendRow([key, val]);
+    try {
+      if (settingsMap.has(key)) sheet.getRange(settingsMap.get(key) + 1, 2).setValue(val);
+      else sheet.appendRow([key, val]);
+    } catch (e) {
+      throw new Error(`Gagal menyimpan "${key}". Kemungkinan data terlalu besar (Limit 50.000 karakter per sel).`);
+    }
   }
   CacheService.getScriptCache().remove('settings');
   CacheService.getScriptCache().remove('data_Settings');
