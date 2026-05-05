@@ -378,14 +378,23 @@ async function handleLogin(e) {
     btn.disabled = true; btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Memproses...';
     try {
         if (role === 'admin') {
-            const username = document.getElementById('username').value.trim().toLowerCase();
+            const usernameField = document.getElementById('username');
+            if (!usernameField) {
+                alert('Elemen input username tidak ditemukan!');
+                return;
+            }
+            const username = usernameField.value.trim().toLowerCase();
+            console.log('Attempting Admin Login:', { username }); // Debug
+            
             const res = await callAPI('login', { username, password });
-            if (res.success) {
-                localStorage.setItem('userRole', 'admin');
-                userRole = 'admin';
-                showApp();
+            console.log('Login Response:', res); // Debug
+            
+            if (res.success) { 
+                localStorage.setItem('userRole', 'admin'); 
+                userRole = 'admin'; 
+                showApp(); 
             } else {
-                alert(res.message || 'Login Admin gagal. Pastikan URL GAS benar dan Anda memiliki akses.');
+                alert(res.message || 'Login Admin gagal. Pastikan password benar.');
             }
         } else {
             if (dataSiswa.length === 0) {
