@@ -70,7 +70,7 @@ function getSheet(name) {
     sheet = ss.insertSheet(name);
     if (SHEETS_CONFIG[name]) sheet.appendRow(SHEETS_CONFIG[name]);
     if (name === 'Settings') {
-      sheet.appendRow(['SchoolName', 'Nama Sekolah Anda']);
+      sheet.appendRow(['SchoolName', 'SMP NEGERI 4 FAKFAK']);
       sheet.appendRow(['AdminPass', 'Lajoroni234']);
     }
   }
