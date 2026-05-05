@@ -72,6 +72,8 @@ function getSheet(name) {
     if (name === 'Settings') {
       sheet.appendRow(['SchoolName', 'SMP NEGERI 4 FAKFAK']);
       sheet.appendRow(['AdminPass', 'Lajoroni234']);
+      sheet.appendRow(['AcademicYear', '2023/2024']);
+      sheet.appendRow(['KopSurat', 'https://imgur.com/3hAG3CN']);
     }
   }
   return sheet;
