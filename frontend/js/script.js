@@ -230,7 +230,38 @@ const DEFAULT_QUESTIONS = {
     ],
     Potensi: [{ id: 'pot1', text: 'Saya senang memimpin dalam kegiatan kelompok', category: 'Kepemimpinan' }, { id: 'pot2', text: 'Saya mampu mempengaruhi orang lain untuk tujuan baik', category: 'Kepemimpinan' }, { id: 'pot3', text: 'Saya senang memecahkan masalah matematika/logika', category: 'Intelektual' }, { id: 'pot4', text: 'Saya cepat memahami materi baru yang bersifat teoritis', category: 'Intelektual' }, { id: 'pot5', text: 'Saya senang menggambar atau membuat kerajinan tangan', category: 'Kreativitas' }, { id: 'pot6', text: 'Saya sering memiliki ide-ide baru yang tidak terpikirkan orang lain', category: 'Kreativitas' }],
     Minat: [{ id: 'min1', text: 'Saya tertarik dengan pekerjaan di bidang teknologi', category: 'Teknologi' }, { id: 'min2', text: 'Saya senang mencoba perangkat lunak atau gadget baru', category: 'Teknologi' }, { id: 'min3', text: 'Saya senang membantu orang lain yang sedang kesulitan', category: 'Sosial' }, { id: 'min4', text: 'Saya tertarik menjadi tenaga kesehatan atau pengajar', category: 'Sosial' }, { id: 'min5', text: 'Saya senang tampil di atas panggung (menyanyi/akting)', category: 'Seni' }, { id: 'min6', text: 'Saya tertarik dengan dunia desain atau musik', category: 'Seni' }],
-    Gaya: [{ id: 'gay1', text: 'Saya lebih mudah ingat jika melihat gambar/diagram', category: 'Visual' }, { id: 'gay2', text: 'Saya lebih suka membaca petunjuk tertulis daripada mendengarkan', category: 'Visual' }, { id: 'gay3', text: 'Saya lebih mudah ingat jika mendengarkan penjelasan langsung', category: 'Auditori' }, { id: 'gay4', text: 'Saya sering berbicara sendiri saat sedang belajar', category: 'Auditori' }, { id: 'gay5', text: 'Saya tidak bisa diam saat sedang belajar (suka bergerak)', category: 'Kinestetik' }, { id: 'gay6', text: 'Saya lebih mudah paham jika langsung mempraktikkan materi', category: 'Kinestetik' }]
+    Gaya: [
+        { id: 'gb1', text: 'Ketika aku mengeja kata-kata, aku biasanya …', options: [{ v: 'A', t: 'menuliskan kata tersebut' }, { v: 'B', t: 'menyebutkan kata tersebut' }, { v: 'C', t: 'menuliskan kata tersebut dengan cara rnenggerak-gerakkan jari di udara' }] },
+        { id: 'gb2', text: 'Aku lebih menyukai …', options: [{ v: 'A', t: 'Seni lukis atau gambar' }, { v: 'B', t: 'Seni musik' }, { v: 'C', t: 'Seni tari atau pahatan' }] },
+        { id: 'gb3', text: 'Saat aku memilih makanan pada daftar menu, aku biasanya …', options: [{ v: 'A', t: 'Membayangkan makanannya akan seperti apa' }, { v: 'B', t: 'Menanyakan rekomendasi menu' }, { v: 'C', t: 'Membayangkan seperti apa rasa makanan itu' }] },
+        { id: 'gb4', text: 'Aku lebih mudah mengingat dan memahami sesuatu dengan cara …', options: [{ v: 'A', t: 'Melihat sesuatu' }, { v: 'B', t: 'Mendengarkan sesuatu' }, { v: 'C', t: 'Melakukan sesuatu' }] },
+        { id: 'gb5', text: 'Ketika aku mengingat sebuah film, aku biasanya lebih ingat …', options: [{ v: 'A', t: 'Seperti apa orang orang dan tempat yang ada di film tersebut' }, { v: 'B', t: 'Apa yang diucapkan para pemeran dan latar belakang musik yang diputar' }, { v: 'C', t: 'Apa yang dilakukan pemeran dan apa yang mereka rasakan' }] },
+        { id: 'gb6', text: 'Aku dapat mengingat orang lain, karena …', options: [{ v: 'A', t: 'Penampilan mereka' }, { v: 'B', t: 'Apa yang mereka katakan kepadaku' }, { v: 'C', t: 'Bagaimana cara mereka memperlakukanku' }] },
+        { id: 'gb7', text: 'Aku lebih suka …', options: [{ v: 'A', t: 'Menonton film / foto / melihat seni atau mengamati orang-orang sekitar' }, { v: 'B', t: 'Mendengarkan musik, radio atau bincang-bincang dengan teman-teman' }, { v: 'C', t: 'Berperan serta dalam olahraga/ menikmati makanan yang disajikan /menari' }] },
+        { id: 'gb8', text: 'Saat mengisi waktu luang, aku biasanya …', options: [{ v: 'A', t: 'Menonton televisi atau menonton film' }, { v: 'B', t: 'Mengobrol dengan teman-teman' }, { v: 'C', t: 'Melakukan aktivitas fisik atau membuat sesuatu' }] },
+        { id: 'gb9', text: 'Ketika bertemu orang baru kenal, aku akan …', options: [{ v: 'A', t: 'Membayangkan apa yang akan dilakukan' }, { v: 'B', t: 'Berbicara dengan mereka melalui telepon' }, { v: 'C', t: 'Mencoba melakukan sesuatu bersama, misalnya kegiatan atau makan bersama' }] },
+        { id: 'gb10', text: 'Aku biasanya memperhatikan seseorang melalui ...', options: [{ v: 'A', t: 'Tampilannya dan pakaiannya' }, { v: 'B', t: 'Suara dan cara berbicaranya' }, { v: 'C', t: 'Tingkah lakunya' }] },
+        { id: 'gb11', text: 'Aku merasa lebih mudah untuk mengingat seseorang dari …', options: [{ v: 'A', t: 'Wajah atau pakaiannya' }, { v: 'B', t: 'Nama' }, { v: 'C', t: 'Apa yang dilakukan' }] },
+        { id: 'gb12', text: 'Ketika mencoba untuk konsentrasi aku sering terganggu dengan …', options: [{ v: 'A', t: 'Orang yang lalu-lalang dihadapanku' }, { v: 'B', t: 'Bunyi dan suara yang ada di sekitarku' }, { v: 'C', t: 'Gerakan atau aktivitas fisik yang ada di sekitarku' }] },
+        { id: 'gb13', text: 'Aku biasanya mengatakan …', options: [{ v: 'A', t: 'aku paham apa maksud anda' }, { v: 'B', t: 'aku mendengar apa yang anda katakan' }, { v: 'C', t: 'aku tahu bagaimana yang Anda rasakan' }] },
+        { id: 'gb14', text: 'Aku sangat menikmati waktu luang disaat ...', options: [{ v: 'A', t: 'Pergi ke perpustakaan atau museum atau lihat lukisan dan gambar' }, { v: 'B', t: 'Mendengarkan musik dan berbincang dengan teman-teman aku' }, { v: 'C', t: 'Berolahraga atau mengerjakan apa saja' }] },
+        { id: 'gb15', text: 'Saat aku mau membeli pakaian, biasanya aku akan …', options: [{ v: 'A', t: 'Membayangkan apakah pakaian tersebut cocok untuk aku' }, { v: 'B', t: 'Meminta rekomendasi dengan karyawan toko' }, { v: 'C', t: 'Mencoba pakaian dan melihat kecocokannya' }] },
+        { id: 'gb16', text: 'Saat aku mendatangi pertunjukan band musik, aku biasanya …', options: [{ v: 'A', t: 'Melihat anggota band dan para penonton' }, { v: 'B', t: 'Mendengarkan lirik dan nada' }, { v: 'C', t: 'Terbawa dalam suasana atau ikut bergerak / Joget' }] },
+        { id: 'gb17', text: 'Aku lebih konsentrasi disaat …', options: [{ v: 'A', t: 'Fokus pada kata-kata atau gambar-gambar di depanku' }, { v: 'B', t: 'Membahas masalah dan memikirkan solusi yang mungkin dapat dilakukan' }, { v: 'C', t: 'Banyak bergerak atau bermain bolpoin atau pensil, atau menyentuh sesuatu' }] },
+        { id: 'gb18', text: 'Aku memilih peralatan di rumah, berdasarkan …', options: [{ v: 'A', t: 'Warnanya dan bagaimana penampilannya' }, { v: 'B', t: 'Penjelasan dari salesnya' }, { v: 'C', t: 'Tekstur peralatan tersebut dan bagaimana rasanya saat menyentuhnya' }] },
+        { id: 'gb19', text: 'Saat aku gagal ujian, biasanya aku akan …', options: [{ v: 'A', t: 'Menulis banyak catatan perbaikan' }, { v: 'B', t: 'Membahas catatanku sendiri atau dengan orang lain' }, { v: 'C', t: 'Membuat kemajuan belajar dengan memperbaiki jawaban' }] },
+        { id: 'gb20', text: 'Dalam sebuah seminar atau di kelas, aku biasanya …', options: [{ v: 'A', t: 'Banyak mencatat apa yang disajikan pemateri' }, { v: 'B', t: 'Mendengarkan dengan baik dan tidak banyak mencatat' }, { v: 'C', t: 'Menggambar sesuatu atau menggerakkan anggota badan sambil mendengarkan' }] },
+        { id: 'gb21', text: 'Jika aku marah, biasanya aku akan …', options: [{ v: 'A', t: 'Terus mengingat hal yang membuat aku marah' }, { v: 'B', t: 'Menceritakan ke orang sekitar tentang perasaanku' }, { v: 'C', t: 'Menunjukkan kemarahan aku, misalnya : menghentakkan kaki, membanting pintu, dan lainnya' }] },
+        { id: 'gb22', text: 'Ketika aku cemas, aku akan …', options: [{ v: 'A', t: 'Membayangkan kemungkinan terburuk' }, { v: 'B', t: 'Memikirkan hal yang paling mengkhawatirkan' }, { v: 'C', t: 'Tidak bisa duduk tenang, terus menerus berkeliling, atau memegang sesuatu' }] },
+        { id: 'gb23', text: 'Ketka aku merakit perabot atau alat baru, biasanya aku akan …', options: [{ v: 'A', t: 'Membaca petunjuk atau melihat diagram terlebih dahulu' }, { v: 'B', t: 'Mendengarkan seseorang menjelaskan langkah-langkahnya' }, { v: 'C', t: 'Langsung merakit dan mencoba sendiri' }] },
+        { id: 'gb24', text: 'Ketika aku perlu petunjuk saat bepergian, biasanya aku akan …', options: [{ v: 'A', t: 'Melihat peta atau map' }, { v: 'B', t: 'Bertanya arah ke orang lain' }, { v: 'C', t: 'Menggunakan kompas dan mengikutinya' }] },
+        { id: 'gb25', text: 'Saat aku ingin memasak sesuatu yang baru, biasanya aku akan …', options: [{ v: 'A', t: 'Mengikuti petunjuk resep tertulis' }, { v: 'B', t: 'Meminta penjelasan kepada teman / orang lain' }, { v: 'C', t: 'Mengikuti naluri, mencicipi selagi memasaknya' }] },
+        { id: 'gb26', text: 'Jika aku memberi tahu seseorang tentang sesuatu, biasanya aku akan …', options: [{ v: 'A', t: 'Menuliskan petunjuk untuk mereka' }, { v: 'B', t: 'Memberikan penjelasan secara lisan' }, { v: 'C', t: 'Memperagakan terlebih dahulu, lalu meminta mereka mempraktekkannya' }] },
+        { id: 'gb27', text: 'Saat merencanakan liburan, biasanya aku akan …', options: [{ v: 'A', t: 'Membaca banyak informasi tempat berlibur di internet atau brosur' }, { v: 'B', t: 'Meminta rekomendasi dari teman-teman' }, { v: 'C', t: 'Membayangkan akan seperti apa jika berada di sana' }] },
+        { id: 'gb28', text: 'Jika aku ingin membeli kendaraan motor / mobil baru, aku akan …', options: [{ v: 'A', t: 'Membaca ulasan di internet, koran, dan majalah' }, { v: 'B', t: 'Membahas apa yang aku butuhkan dengan teman-teman' }, { v: 'C', t: 'Mencoba banyak jenis mobil yang berbeda' }] },
+        { id: 'gb29', text: 'Aku dapat mengetahui seseorang berbohong, jika …', options: [{ v: 'A', t: 'Mereka menghindari kontak mata' }, { v: 'B', t: 'Perubahan suara mereka' }, { v: 'C', t: 'Mereka menunjukkan perilaku yang aneh' }] },
+        { id: 'gb30', text: 'Jika aku mengeluh tentang barang yang ku beli ternyata rusak, aku akan …', options: [{ v: 'A', t: 'Menulis surat / pesan pengaduan' }, { v: 'B', t: 'Menyampaikan keluhan melalui telepon' }, { v: 'C', t: 'Mengembalikannya ke toko atau mengirimkannya ke kantor pusat' }] }
+    ]
 };
 
 // Table Configurations for Generic Rendering
@@ -242,7 +273,8 @@ const TABLE_CONFIG = {
     'DCM': { bodyId: 'table-dcm-body', cols: ['Tanggal', 'Siswa', 'Hasil/Keterangan'] },
     'Potensi': { bodyId: 'table-potensi-body', cols: ['Tanggal', 'Siswa', 'Potensi Diri'] },
     'MinatBakat': { bodyId: 'table-minat-body', cols: ['Tanggal', 'Siswa', 'Minat', 'Bakat'] },
-    'GayaBelajar': { bodyId: 'table-gaya-belajar-body', cols: ['Tanggal', 'Siswa', 'Tipe Gaya Belajar'] }
+    'GayaBelajar': { bodyId: 'table-gaya-belajar-body', cols: ['Tanggal', 'Siswa', 'Tipe Gaya Belajar'] },
+    'JawabanInstrumen': { bodyId: 'table-jawaban-body', cols: ['Tanggal', 'Nama', 'Kelas', 'Instrumen', (i) => `<button class="btn btn-sm btn-info" onclick="viewDetailJawaban('${i.ID}')">Lihat Detail</button>`] }
 };
 
 // Initialize
@@ -340,9 +372,10 @@ function showSection(id, type = '') {
     if (userRole === 'admin') {
         const renderMap = {
             'dashboard': updateDashboardCounts, 'data-siswa': () => renderTable('Siswa', dataSiswa), 'data-guru': () => renderTable('Guru', dataGuru),
-            'data-wali-kelas': () => renderTable('WaliKelas', dataWali), 'pengaturan': loadSettingsToForm, 'kelola-pertanyaan': renderTablePertanyaan,
+            'data-wali-kelas': () => renderTable('WaliKelas', dataWali), 'data-jawaban': () => renderTable('JawabanInstrumen', dataJawaban), 'pengaturan': loadSettingsToForm, 'kelola-pertanyaan': renderTablePertanyaan,
             'instrumen-dcm': () => renderTable('DCM', dataDCM), 'instrumen-potensi': () => renderTable('Potensi', dataPotensi),
             'instrumen-minat': () => renderTable('MinatBakat', dataMinat), 'instrumen-gaya-belajar': () => renderTable('GayaBelajar', dataGayaBelajar),
+            'analisis-instrumen': updateAnalisisFilters,
             'layanan-bk': () => { document.getElementById('layanan-title').innerText = `Layanan BK: ${type}`; renderTable('LayananBK', type === 'Semua' ? dataLayanan : dataLayanan.filter(l => l['Jenis Layanan'] === type)); }
         };
         if (renderMap[id]) renderMap[id]();
@@ -359,7 +392,7 @@ async function refreshData() {
         if (res.success) {
             const d = res.data;
             dataSiswa = d.Siswa; dataLayanan = d.LayananBK; dataGuru = d.Guru; dataWali = d.WaliKelas; dataDCM = d.DCM; dataPotensi = d.Potensi; dataMinat = d.MinatBakat; dataGayaBelajar = d.GayaBelajar; dataJawaban = d.JawabanInstrumen; dataPertanyaan = d.PertanyaanInstrumen; appSettings = d.Settings;
-            updateUIFromSettings(); updateSiswaSelect(); updateDashboardCounts();
+            updateUIFromSettings(); updateSiswaSelect(); updateKelasSelect(); updateDashboardCounts();
             if (currentSection) showSection(currentSection, currentLayananType);
         }
     } finally { isRefreshing = false; }
@@ -402,8 +435,20 @@ function startInstrumen(type) {
             currentCategory = q.category;
             html += `<div class="category-header mt-4 mb-3 p-2 bg-primary text-white rounded"><h5>Bidang: ${currentCategory}</h5></div>`;
         }
-        html += `<div class="mb-3 p-3 border rounded bg-light shadow-sm">
-            <p class="fw-bold mb-2">${i + 1}. ${q.text}</p>
+
+        let optionsHtml = '';
+        if (q.options && q.options.length > 0) {
+            optionsHtml = `<div class="d-flex flex-column gap-2">`;
+            q.options.forEach(opt => {
+                optionsHtml += `
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="q-${q.id}" id="${q.id}-${opt.v}" value="${opt.v}" required>
+                    <label class="form-check-label" for="${q.id}-${opt.v}">${opt.v}. ${opt.t}</label>
+                </div>`;
+            });
+            optionsHtml += `</div>`;
+        } else {
+            optionsHtml = `
             <div class="d-flex gap-4">
                 <div class="form-check">
                     <input class="form-check-input" type="radio" name="q-${q.id}" id="${q.id}-ya" value="Ya" required>
@@ -413,7 +458,12 @@ function startInstrumen(type) {
                     <input class="form-check-input" type="radio" name="q-${q.id}" id="${q.id}-tidak" value="Tidak" required>
                     <label class="form-check-label" for="${q.id}-tidak">Tidak</label>
                 </div>
-            </div>
+            </div>`;
+        }
+
+        html += `<div class="mb-3 p-3 border rounded bg-light shadow-sm">
+            <p class="fw-bold mb-2">${i + 1}. ${q.text}</p>
+            ${optionsHtml}
         </div>`;
     });
 
@@ -434,6 +484,19 @@ function calculatePercentage(nisn, type) {
     const data = dataJawaban.find(j => j.NISN === nisn && j.Instrumen === type);
     if (!data) return null;
     const jaw = JSON.parse(data.Jawaban), qs = dataPertanyaan.filter(p => p.Instrumen === type).length ? dataPertanyaan.filter(p => p.Instrumen === type).map(p => ({ id: p.ID, category: p.Kategori })) : DEFAULT_QUESTIONS[type];
+
+    if (type === 'Gaya') {
+        const counts = { 'Visual': 0, 'Auditori': 0, 'Kinestetik': 0 };
+        const total = Object.keys(jaw).length;
+        if (total === 0) return counts;
+        Object.values(jaw).forEach(val => {
+            if (val === 'A') counts['Visual']++;
+            else if (val === 'B') counts['Auditori']++;
+            else if (val === 'C') counts['Kinestetik']++;
+        });
+        return Object.keys(counts).reduce((res, key) => { res[key] = Math.round((counts[key] / total) * 100); return res; }, {});
+    }
+
     const cats = [...new Set(qs.map(q => q.category))];
     return cats.reduce((res, cat) => { const cQs = qs.filter(q => q.category === cat); res[cat] = Math.round((cQs.filter(q => jaw[q.id] === 'Ya').length / cQs.length) * 100); return res; }, {});
 }
@@ -446,6 +509,14 @@ const updateDashboardCounts = () => {
 };
 const updateSiswaSelect = () => {
     document.querySelectorAll('.select-siswa, #layanan-siswa').forEach(s => { const val = s.value; s.innerHTML = '<option value="">Pilih Siswa...</option>' + dataSiswa.map(si => `<option value="${si.Nama}">${si.Nama} (${si.Kelas})</option>`).join(''); s.value = val; });
+};
+
+const updateKelasSelect = () => {
+    const kelasList = [...new Set(dataSiswa.map(s => s.Kelas))].sort();
+    const select = document.getElementById('analisis-filter-kelas');
+    if (select) {
+        select.innerHTML = '<option value="">Pilih Kelas...</option>' + kelasList.map(k => `<option value="${k}">${k}</option>`).join('');
+    }
 };
 
 const toggleLoginFields = () => {
@@ -497,6 +568,42 @@ async function deleteItem(sheet, id) {
     if (confirm('Hapus data ini?')) { const res = await callAPI('deleteData', { sheetName: sheet, id }); if (res.success) refreshData(); }
 }
 
+function viewDetailJawaban(id) {
+    const data = dataJawaban.find(j => j.ID === id);
+    if (!data) return;
+
+    const jaw = JSON.parse(data.Jawaban);
+    const type = data.Instrumen;
+    const questions = dataPertanyaan.filter(p => p.Instrumen === type).length ? dataPertanyaan.filter(p => p.Instrumen === type) : DEFAULT_QUESTIONS[type];
+
+    document.getElementById('detail-jawaban-info').innerHTML = `
+        <div class="row">
+            <div class="col-md-6">
+                <p class="mb-1"><strong>Nama:</strong> ${data.Nama}</p>
+                <p class="mb-1"><strong>Kelas:</strong> ${data.Kelas}</p>
+            </div>
+            <div class="col-md-6 text-md-end">
+                <p class="mb-1"><strong>Instrumen:</strong> ${type}</p>
+                <p class="mb-1"><strong>Tanggal:</strong> ${data.Tanggal}</p>
+            </div>
+        </div>
+    `;
+
+    let html = '';
+    questions.forEach((q, i) => {
+        const val = jaw[q.id || q.ID] || '-';
+        let label = val;
+        if (type === 'Gaya') {
+            const opt = q.options?.find(o => o.v === val);
+            if (opt) label = `${val}. ${opt.t}`;
+        }
+        html += `<tr><td>${i + 1}</td><td>${q.text || q.Pertanyaan}</td><td>${label}</td></tr>`;
+    });
+
+    document.getElementById('detail-jawaban-body').innerHTML = html;
+    new bootstrap.Modal(document.getElementById('modalDetailJawaban')).show();
+}
+
 // Analytics Rendering
 function renderHasilSaya() {
     const container = document.getElementById('hasil-saya-content'); container.innerHTML = '';
@@ -504,8 +611,115 @@ function renderHasilSaya() {
         const res = calculatePercentage(currentUser.NISN, type); if (!res) return;
         const cardId = `chart-${type.toLowerCase()}`;
         container.innerHTML += `<div class="col-md-6 mb-4"><div class="card shadow-sm h-100"><div class="card-header bg-white"><strong>${type}</strong></div><div class="card-body"><canvas id="${cardId}"></canvas></div></div></div>`;
-        setTimeout(() => new Chart(document.getElementById(cardId), { type: 'radar', data: { labels: Object.keys(res), datasets: [{ label: '%', data: Object.values(res), backgroundColor: 'rgba(54,162,235,0.2)', borderColor: 'rgb(54,162,235)' }] }, options: { scales: { r: { suggestMin: 0, suggestMax: 100 } } } }), 100);
+        setTimeout(() => {
+            const chartType = type === 'Gaya' ? 'bar' : 'radar';
+            new Chart(document.getElementById(cardId), {
+                type: chartType,
+                data: {
+                    labels: Object.keys(res),
+                    datasets: [{
+                        label: '%',
+                        data: Object.values(res),
+                        backgroundColor: type === 'Gaya' ? ['rgba(54,162,235,0.5)', 'rgba(255,99,132,0.5)', 'rgba(75,192,192,0.5)'] : 'rgba(54,162,235,0.2)',
+                        borderColor: type === 'Gaya' ? ['rgb(54,162,235)', 'rgb(255,99,132)', 'rgb(75,192,192)'] : 'rgb(54,162,235)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: chartType === 'bar' ? { y: { beginAtZero: true, max: 100 } } : { r: { suggestMin: 0, suggestMax: 100 } }
+                }
+            });
+        }, 100);
     });
+}
+
+function updateAnalisisFilters() {
+    const level = document.getElementById('analisis-level').value;
+    document.getElementById('filter-siswa-container').classList.toggle('d-none', level !== 'individu');
+    document.getElementById('filter-kelas-container').classList.toggle('d-none', level !== 'kelas');
+    generateAnalisis();
+}
+
+function generateAnalisis() {
+    const container = document.getElementById('analisis-result-container');
+    const type = document.getElementById('analisis-instrumen-type').value;
+    const level = document.getElementById('analisis-level').value;
+
+    let results = null;
+    let label = '';
+
+    if (level === 'individu') {
+        const nama = document.getElementById('analisis-filter-siswa').value;
+        const siswa = dataSiswa.find(s => s.Nama === nama);
+        if (!siswa) { container.innerHTML = '<div class="alert alert-info">Pilih siswa untuk melihat analisis.</div>'; return; }
+        results = calculatePercentage(siswa.NISN, type);
+        label = `Hasil ${type} - ${siswa.Nama}`;
+    } else if (level === 'kelas') {
+        const kelas = document.getElementById('analisis-filter-kelas').value;
+        if (!kelas) { container.innerHTML = '<div class="alert alert-info">Pilih kelas untuk melihat analisis.</div>'; return; }
+        const siswaDiKelas = dataSiswa.filter(s => s.Kelas === kelas);
+        const allRes = siswaDiKelas.map(s => calculatePercentage(s.NISN, type)).filter(r => r !== null);
+
+        if (allRes.length === 0) {
+            container.innerHTML = '<div class="alert alert-info">Belum ada data untuk kelas ini.</div>';
+            return;
+        }
+
+        const keys = Object.keys(allRes[0]);
+        results = keys.reduce((acc, key) => {
+            acc[key] = Math.round(allRes.reduce((sum, r) => sum + r[key], 0) / allRes.length);
+            return acc;
+        }, {});
+        label = `Rata-rata ${type} - Kelas ${kelas} (${allRes.length} Siswa)`;
+    }
+
+    if (!results) {
+        container.innerHTML = '<div class="alert alert-warning">Data tidak ditemukan. Pastikan instrumen sudah diisi.</div>';
+        return;
+    }
+
+    container.innerHTML = `
+        <div class="card shadow-sm">
+            <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                <strong>${label}</strong>
+                <button class="btn btn-sm btn-outline-primary" onclick="window.print()"><i class="fas fa-print me-1"></i>Cetak</button>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <canvas id="analisis-chart"></canvas>
+                    </div>
+                    <div class="col-md-6">
+                        <table class="table table-bordered mt-4">
+                            <thead><tr><th>Kategori</th><th>Persentase</th></tr></thead>
+                            <tbody>
+                                ${Object.entries(results).map(([k, v]) => `<tr><td>${k}</td><td>${v}%</td></tr>`).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>`;
+
+    setTimeout(() => {
+        const chartType = type === 'Gaya' ? 'bar' : 'radar';
+        new Chart(document.getElementById('analisis-chart'), {
+            type: chartType,
+            data: {
+                labels: Object.keys(results),
+                datasets: [{
+                    label: '%',
+                    data: Object.values(results),
+                    backgroundColor: type === 'Gaya' ? ['rgba(54,162,235,0.5)', 'rgba(255,99,132,0.5)', 'rgba(75,192,192,0.5)'] : 'rgba(54,162,235,0.2)',
+                    borderColor: type === 'Gaya' ? ['rgb(54,162,235)', 'rgb(255,99,132)', 'rgb(75,192,192)'] : 'rgb(54,162,235)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: chartType === 'bar' ? { y: { beginAtZero: true, max: 100 } } : { r: { suggestMin: 0, suggestMax: 100 } }
+            }
+        });
+    }, 100);
 }
 
 function updateSiswaStatus() {
