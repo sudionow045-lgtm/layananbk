@@ -41,7 +41,8 @@ function runAction(action, payload) {
     const actions = {
       login: () => {
         const settings = getSettings();
-        const isValid = payload.username === ADMIN_USER && (payload.password === ADMIN_PASS || payload.password === settings.AdminPass);
+        const username = (payload.username || '').toLowerCase().trim();
+        const isValid = username === ADMIN_USER && (payload.password === ADMIN_PASS || payload.password === settings.AdminPass);
         return { success: isValid, message: isValid ? 'Login Berhasil' : 'Username atau Password Salah' };
       },
       getData: () => ({ success: true, data: getAllData(payload.sheetName) }),
