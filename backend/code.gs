@@ -98,6 +98,7 @@ function updateSettings(newSettings) {
     else sheet.appendRow([key, val]);
   }
   CacheService.getScriptCache().remove('settings');
+  CacheService.getScriptCache().remove('data_Settings');
   return { message: 'Pengaturan diperbarui' };
 }
 
@@ -109,7 +110,12 @@ function getAllData(sheetName) {
   const values = getSheet(sheetName).getDataRange().getValues();
   if (values.length <= 1) return [];
   const headers = values[0];
-  const data = values.slice(1).map(row => headers.reduce((obj, h, i) => ({ ...obj, [h]: row[i] }), {}));
+  let data;
+  if (sheetName === 'Settings') {
+    data = values.slice(1).reduce((acc, [key, val]) => ({ ...acc, [key]: val }), {});
+  } else {
+    data = values.slice(1).map(row => headers.reduce((obj, h, i) => ({ ...obj, [h]: row[i] }), {}));
+  }
   
   try {
     cache.put('data_' + sheetName, JSON.stringify(data), CACHE_TIME);
@@ -146,8 +152,13 @@ function getBatchData(sheetNames) {
         result[name] = [];
       } else {
         const headers = values[0];
-        const data = values.slice(1).map(row => headers.reduce((obj, h, i) => ({ ...obj, [h]: row[i] }), {}));
-        result[name] = data;
+      let data;
+      if (name === 'Settings') {
+        data = values.slice(1).reduce((acc, [key, val]) => ({ ...acc, [key]: val }), {});
+      } else {
+        data = values.slice(1).map(row => headers.reduce((obj, h, i) => ({ ...obj, [h]: row[i] }), {}));
+      }
+      result[name] = data;
         try { cache.put('data_' + name, JSON.stringify(data), CACHE_TIME); } catch (e) {}
       }
     });
