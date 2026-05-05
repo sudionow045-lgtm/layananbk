@@ -380,7 +380,13 @@ async function handleLogin(e) {
         if (role === 'admin') {
             const username = document.getElementById('username').value.trim().toLowerCase();
             const res = await callAPI('login', { username, password });
-            if (res.success) { localStorage.setItem('userRole', 'admin'); userRole = 'admin'; showApp(); } else alert(res.message);
+            if (res.success) {
+                localStorage.setItem('userRole', 'admin');
+                userRole = 'admin';
+                showApp();
+            } else {
+                alert(res.message || 'Login Admin gagal. Pastikan URL GAS benar dan Anda memiliki akses.');
+            }
         } else {
             if (dataSiswa.length === 0) {
                 alert('Data siswa belum dimuat atau kosong. Silakan tunggu sebentar atau hubungi Admin.');
@@ -600,9 +606,19 @@ const updateKelasSelect = () => {
 };
 
 const toggleLoginFields = () => {
-    const isSiswa = document.getElementById('login-role').value === 'siswa';
-    document.getElementById('field-username').classList.toggle('d-none', isSiswa);
-    document.getElementById('field-nisn').classList.toggle('d-none', !isSiswa);
+    const role = document.getElementById('login-role').value;
+    const isSiswa = role === 'siswa';
+    document.getElementById('field-username')?.classList.toggle('d-none', isSiswa);
+    document.getElementById('field-nisn')?.classList.toggle('d-none', !isSiswa);
+
+    // Clear inputs when toggling
+    if (isSiswa) {
+        const userField = document.getElementById('username');
+        if (userField) userField.value = '';
+    } else {
+        const nisnField = document.getElementById('login-nisn');
+        if (nisnField) nisnField.value = '';
+    }
 };
 
 function previewKop(input) {
@@ -921,33 +937,37 @@ function handleMockAPI(action, payload) {
 async function callAPI(action, payload) {
     // Check if running inside Google Apps Script environment
     if (typeof google !== 'undefined' && google.script && google.script.run) {
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve) => {
             google.script.run
                 .withSuccessHandler(res => resolve(res))
                 .withFailureHandler(err => {
                     console.error('GAS API Error:', err);
-                    resolve({ success: false, message: err.toString() });
+                    resolve({ success: false, message: 'Server Error: ' + err.toString() });
                 })
                 .runAction(action, payload);
-            // Note: In GAS Web App, we can call functions directly, 
-            // but since we already have a robust doPost, we can reuse it 
-            // by wrapping the call or calling functions directly.
-            // To keep it simple and consistent with existing logic:
-            /*
-            google.script.run
-                .withSuccessHandler(resolve)
-                .withFailureHandler(err => resolve({success: false, message: err}))
-                [action](payload); 
-            */
-            // However, the current code.gs doPost is well-tested. 
-            // Let's call the specific functions instead for better GAS integration.
         });
     }
 
     // Fallback to fetch (for local development or external hosting)
-    if (!GAS_URL.startsWith('https://script.google.com')) return handleMockAPI(action, payload);
+    if (!GAS_URL || !GAS_URL.startsWith('https://script.google.com')) return handleMockAPI(action, payload);
+
     try {
-        const res = await fetch(GAS_URL, { method: 'POST', mode: 'cors', redirect: 'follow', body: JSON.stringify({ action, payload }) });
-        return res.ok ? await res.json() : { success: false };
-    } catch (e) { console.error(e); return { success: false }; }
+        const res = await fetch(GAS_URL, {
+            method: 'POST',
+            mode: 'cors',
+            redirect: 'follow',
+            body: JSON.stringify({ action, payload })
+        });
+
+        if (!res.ok) return { success: false, message: `HTTP Error: ${res.status}` };
+
+        const data = await res.json();
+        return data;
+    } catch (e) {
+        console.error('Fetch Error:', e);
+        return {
+            success: false,
+            message: 'Koneksi gagal. Jika menjalankan secara lokal, pastikan GAS Web App sudah dideploy dengan akses "Anyone" dan gunakan mode HTTP/S.'
+        };
+    }
 }
