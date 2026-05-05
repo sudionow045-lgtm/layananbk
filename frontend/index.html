@@ -12,6 +12,14 @@
 </head>
 
 <body>
+    <!-- Global Loading Indicator -->
+    <div id="loading-indicator" class="d-none position-fixed top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center bg-white bg-opacity-75" style="z-index: 9999;">
+        <div class="text-center">
+            <div class="spinner-border text-primary mb-2" style="width: 3rem; height: 3rem;" role="status"></div>
+            <p class="mb-0 fw-bold">Memuat Data...</p>
+        </div>
+    </div>
+
     <!-- Login Section -->
     <div id="login-container" class="container">
         <div class="row justify-content-center align-items-center vh-100">
@@ -662,9 +670,16 @@
                                     <div class="mb-3"><label class="form-label">Kop Surat Sekolah (Gambar)</label><input
                                             type="file" id="setting-kop-file" class="form-control" accept="image/*"
                                             onchange="previewKop(this)">
-                                        <div id="kop-preview-container" class="mt-2 d-none"><img id="kop-preview-img"
-                                                src="" alt="Kop Surat" class="img-fluid border rounded"
-                                                style="max-height: 150px;"></div>
+                                    </div>
+                                    <div class="mt-3">
+                                        <label class="form-label d-block">Preview Kop Surat:</label>
+                                        <div id="kop-preview-container" class="p-3 border rounded bg-white text-center">
+                                            <!-- Preview content will be injected here -->
+                                            <div id="kop-preview-content">
+                                                <h3 id="preview-school-name">Nama Sekolah</h3>
+                                                <p id="preview-app-title" class="mb-0">Layanan Bimbingan Konseling</p>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
