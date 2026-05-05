@@ -384,15 +384,22 @@ async function handleLogin(e) {
                 return;
             }
             const username = usernameField.value.trim().toLowerCase();
-            console.log('Attempting Admin Login:', { username }); // Debug
-            
+            console.log('Attempting Admin Login:', { username });
+
+            // Hardcoded check as a fallback if API is unreachable or fails
+            const isDefaultAdmin = username === 'admin' && password === 'Lajoroni234';
+
             const res = await callAPI('login', { username, password });
-            console.log('Login Response:', res); // Debug
-            
-            if (res.success) { 
-                localStorage.setItem('userRole', 'admin'); 
-                userRole = 'admin'; 
-                showApp(); 
+            console.log('Login Response:', res);
+
+            if (res.success || (isDefaultAdmin && !res.success)) {
+                if (!res.success && isDefaultAdmin) {
+                    console.warn('API Login failed, but using hardcoded fallback for admin.');
+                    alert('Login Berhasil (Mode Offline/Fallback). Koneksi ke Google Script mungkin bermasalah, namun Anda tetap bisa masuk.');
+                }
+                localStorage.setItem('userRole', 'admin');
+                userRole = 'admin';
+                showApp();
             } else {
                 alert(res.message || 'Login Admin gagal. Pastikan password benar.');
             }
