@@ -66,6 +66,7 @@ function runAction(action, payload) {
   try {
     const actions = {
       test: () => ({ success: true, message: 'Koneksi ke Google Script Berhasil!', timestamp: new Date().toISOString() }),
+      testConnection: () => ({ success: true, message: 'Koneksi ke Google Script Berhasil!', timestamp: new Date().toISOString() }),
       login: () => {
         const settings = getSettings();
         const username = (p.username || '').toLowerCase().trim();
