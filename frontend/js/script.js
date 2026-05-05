@@ -714,6 +714,27 @@ const loadSettingsToForm = () => {
     }
 };
 
+async function testBackendConnection() {
+    const btn = event.currentTarget;
+    const originalText = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Menghubungkan...';
+
+    try {
+        const res = await callAPI('test', {});
+        if (res.success) {
+            alert('Sukses! ' + res.message + '\n\nTimestamp: ' + res.timestamp);
+        } else {
+            alert('Gagal: ' + res.message);
+        }
+    } catch (err) {
+        alert('Kesalahan fatal saat mencoba menghubungkan ke backend.');
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = originalText;
+    }
+}
+
 async function handleSaveSettings(e) {
     e.preventDefault();
     const s = {
@@ -997,6 +1018,8 @@ async function callAPI(action, payload) {
     if (!GAS_URL || !GAS_URL.startsWith('https://script.google.com')) return handleMockAPI(action, payload);
 
     try {
+        // Menggunakan POST dengan mode cors tapi menghindari preflight dengan tidak menyetel Content-Type JSON
+        // GAS akan menerima body ini di e.postData.contents
         const res = await fetch(GAS_URL, {
             method: 'POST',
             mode: 'cors',
@@ -1006,8 +1029,14 @@ async function callAPI(action, payload) {
 
         if (!res.ok) return { success: false, message: `HTTP Error: ${res.status}` };
 
-        const data = await res.json();
-        return data;
+        // GAS mengembalikan teks yang perlu di-parse
+        const text = await res.text();
+        try {
+            return JSON.parse(text);
+        } catch (parseErr) {
+            console.error('JSON Parse Error:', text);
+            return { success: false, message: 'Format respons server tidak valid.' };
+        }
     } catch (e) {
         console.error('Fetch Error:', e);
         return {
