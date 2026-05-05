@@ -662,15 +662,20 @@ const toggleLoginFields = () => {
 function previewKop(input) {
     const imgContainer = document.getElementById('preview-image-container');
     const textContainer = document.getElementById('preview-text-container');
+
+    if (!imgContainer || !textContainer) return;
+
     if (input.files && input.files[0]) {
         const reader = new FileReader();
         reader.onload = (e) => {
-            imgContainer.innerHTML = `<img src="${e.target.result}" class="img-fluid" style="max-height: 120px;">`;
+            imgContainer.innerHTML = `<img src="${e.target.result}" class="img-fluid" style="max-height: 120px; width: auto; object-fit: contain;">`;
             textContainer.classList.add('d-none');
+            imgContainer.classList.remove('d-none');
         };
         reader.readAsDataURL(input.files[0]);
     } else {
         imgContainer.innerHTML = '';
+        imgContainer.classList.add('d-none');
         textContainer.classList.remove('d-none');
         updateKopPreviewText();
     }
@@ -698,10 +703,12 @@ const loadSettingsToForm = () => {
     schoolNameInput.addEventListener('input', updateKopPreviewText);
 
     if (appSettings.KopSurat) {
-        imgContainer.innerHTML = `<img src="${appSettings.KopSurat}" class="img-fluid" style="max-height: 120px;">`;
+        imgContainer.innerHTML = `<img src="${appSettings.KopSurat}" class="img-fluid" style="max-height: 120px; width: auto; object-fit: contain;">`;
+        imgContainer.classList.remove('d-none');
         textContainer.classList.add('d-none');
     } else {
         imgContainer.innerHTML = '';
+        imgContainer.classList.add('d-none');
         textContainer.classList.remove('d-none');
         updateKopPreviewText();
     }
