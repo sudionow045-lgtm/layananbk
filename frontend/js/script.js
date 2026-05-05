@@ -1,5 +1,5 @@
 // Configuration
-const GAS_URL = 'https://script.google.com/macros/s/AKfycbweGlIn_LOG-gfuSX8y9K9SXgELCeDILJT1VzxP_Ip1OmpETVO0m_CvAq9OuSdz6PtQ2g/exec';
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbwci3ADaZ-QtBjgRFaULrcqgY1cICvfqnoSrgi9ve603AfL6by3kRJD2K_Aw5Z3ve41xQ/exec';
 
 // State Management
 let currentSection = 'dashboard', currentLayananType = '', userRole = '', currentUser = null, appSettings = {}, isRefreshing = false, isFirstLoad = true;
@@ -492,7 +492,14 @@ async function handleSaveGenericAction(action, payload, modalId, formId) {
 
 // Instrumen & Analytics
 function startInstrumen(type) {
-    const questions = dataPertanyaan.filter(p => p.Instrumen === type).length ? dataPertanyaan.filter(p => p.Instrumen === type).map(p => ({ id: p.ID, text: p.Pertanyaan, category: p.Kategori })) : DEFAULT_QUESTIONS[type];
+    const questions = dataPertanyaan.filter(p => p.Instrumen === type).length
+        ? dataPertanyaan.filter(p => p.Instrumen === type).map(p => ({
+            id: p.ID,
+            text: p.Pertanyaan,
+            category: p.Kategori,
+            options: p.Opsi ? JSON.parse(p.Opsi) : null
+        }))
+        : DEFAULT_QUESTIONS[type];
     document.getElementById('instrumen-form-container').classList.remove('d-none');
     document.getElementById('instrumen-form-title').innerText = `Isi Instrumen: ${type}`;
 
@@ -622,7 +629,7 @@ const loadSettingsToForm = () => {
     const academicYearInput = document.getElementById('setting-academic-year');
     const imgContainer = document.getElementById('preview-image-container');
     const textContainer = document.getElementById('preview-text-container');
-    
+
     if (!schoolNameInput || !academicYearInput) return;
 
     schoolNameInput.value = appSettings.SchoolName || '';
@@ -661,10 +668,10 @@ async function handleSaveSettings(e) {
 
     const pass = document.getElementById('setting-admin-pass').value;
     if (pass) s.AdminPass = pass;
-    
+
     const res = await callAPI('updateSettings', { settings: s });
-    if (res.success) { 
-        alert('Pengaturan berhasil disimpan!'); 
+    if (res.success) {
+        alert('Pengaturan berhasil disimpan!');
         refreshData(true); // Force refresh
     }
 }
@@ -690,7 +697,7 @@ async function editItem(sheet, id) {
         Potensi: { modal: 'modalPotensi', fields: ['potensi-id', 'potensi-tanggal', 'potensi-siswa', 'potensi-diri'], keys: ['ID', 'Tanggal', 'Siswa', 'Potensi Diri'] },
         MinatBakat: { modal: 'modalMinat', fields: ['minat-id', 'minat-tanggal', 'minat-siswa', 'minat-bidang', 'bakat-bidang'], keys: ['ID', 'Tanggal', 'Siswa', 'Minat', 'Bakat'] },
         GayaBelajar: { modal: 'modalGayaBelajar', fields: ['gaya-belajar-id', 'gaya-belajar-tanggal', 'gaya-belajar-siswa', 'gaya-belajar-tipe'], keys: ['ID', 'Tanggal', 'Siswa', 'Tipe Gaya Belajar'] },
-        PertanyaanInstrumen: { modal: 'modalPertanyaan', fields: ['pertanyaan-id', 'pertanyaan-instrumen', 'pertanyaan-teks', 'pertanyaan-kategori'], keys: ['ID', 'Instrumen', 'Pertanyaan', 'Kategori'] }
+        PertanyaanInstrumen: { modal: 'modalPertanyaan', fields: ['pertanyaan-id', 'pertanyaan-instrumen', 'pertanyaan-teks', 'pertanyaan-kategori', 'pertanyaan-opsi'], keys: ['ID', 'Instrumen', 'Pertanyaan', 'Kategori', 'Opsi'] }
     }[sheet];
     if (config) { config.fields.forEach((f, i) => document.getElementById(f).value = item[config.keys[i]]); new bootstrap.Modal(document.getElementById(config.modal)).show(); }
 }
@@ -881,7 +888,7 @@ function renderTablePertanyaan() {
 }
 
 async function handleSavePertanyaan(e) {
-    e.preventDefault(); const id = document.getElementById('pertanyaan-id').value, rowData = { Instrumen: document.getElementById('pertanyaan-instrumen').value, Pertanyaan: document.getElementById('pertanyaan-teks').value, Kategori: document.getElementById('pertanyaan-kategori').value };
+    e.preventDefault(); const id = document.getElementById('pertanyaan-id').value, rowData = { Instrumen: document.getElementById('pertanyaan-instrumen').value, Pertanyaan: document.getElementById('pertanyaan-teks').value, Kategori: document.getElementById('pertanyaan-kategori').value, Opsi: document.getElementById('pertanyaan-opsi').value };
     const res = await callAPI(id ? 'updateData' : 'addData', id ? { sheetName: 'PertanyaanInstrumen', id, rowData } : { sheetName: 'PertanyaanInstrumen', rowData });
     if (res.success) { bootstrap.Modal.getInstance(document.getElementById('modalPertanyaan')).hide(); refreshData(); }
 }
@@ -904,6 +911,32 @@ function handleMockAPI(action, payload) {
 
 // API Base
 async function callAPI(action, payload) {
+    // Check if running inside Google Apps Script environment
+    if (typeof google !== 'undefined' && google.script && google.script.run) {
+        return new Promise((resolve, reject) => {
+            google.script.run
+                .withSuccessHandler(res => resolve(res))
+                .withFailureHandler(err => {
+                    console.error('GAS API Error:', err);
+                    resolve({ success: false, message: err.toString() });
+                })
+                .runAction(action, payload);
+            // Note: In GAS Web App, we can call functions directly, 
+            // but since we already have a robust doPost, we can reuse it 
+            // by wrapping the call or calling functions directly.
+            // To keep it simple and consistent with existing logic:
+            /*
+            google.script.run
+                .withSuccessHandler(resolve)
+                .withFailureHandler(err => resolve({success: false, message: err}))
+                [action](payload); 
+            */
+            // However, the current code.gs doPost is well-tested. 
+            // Let's call the specific functions instead for better GAS integration.
+        });
+    }
+
+    // Fallback to fetch (for local development or external hosting)
     if (!GAS_URL.startsWith('https://script.google.com')) return handleMockAPI(action, payload);
     try {
         const res = await fetch(GAS_URL, { method: 'POST', mode: 'cors', redirect: 'follow', body: JSON.stringify({ action, payload }) });
