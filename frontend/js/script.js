@@ -2,8 +2,47 @@
 const GAS_URL = 'https://script.google.com/macros/s/AKfycbxiRz0jik-wiHLi4umC68tYHBZSsAI4xJVXHMnUdmhxdCNkTjyHvzSBtPN7irs29wfQaw/exec';
 
 // State Management
-let currentSection = 'dashboard', currentLayananType = '', userRole = '', currentUser = null, appSettings = {}, isRefreshing = false;
+let currentSection = 'dashboard', currentLayananType = '', userRole = '', currentUser = null, appSettings = {}, isRefreshing = false, isFirstLoad = true;
 let dataSiswa = [], dataLayanan = [], dataGuru = [], dataWali = [], dataDCM = [], dataPotensi = [], dataMinat = [], dataGayaBelajar = [], dataJawaban = [], dataPertanyaan = [];
+
+// Cache Management
+const saveToCache = (data) => {
+    try {
+        localStorage.setItem('bk_app_data', JSON.stringify({
+            timestamp: Date.now(),
+            data: data
+        }));
+    } catch (e) { console.warn('Cache full, skipping...'); }
+};
+
+const loadFromCache = () => {
+    const cached = localStorage.getItem('bk_app_data');
+    if (!cached) return null;
+    const { timestamp, data } = JSON.parse(cached);
+    // Cache valid selama 1 jam untuk frontend
+    if (Date.now() - timestamp > 3600000) return null;
+    return data;
+};
+
+const applyData = (d) => {
+    dataSiswa = d.Siswa || [];
+    dataLayanan = d.LayananBK || [];
+    dataGuru = d.Guru || [];
+    dataWali = d.WaliKelas || [];
+    dataDCM = d.DCM || [];
+    dataPotensi = d.Potensi || [];
+    dataMinat = d.MinatBakat || [];
+    dataGayaBelajar = d.GayaBelajar || [];
+    dataJawaban = d.JawabanInstrumen || [];
+    dataPertanyaan = d.PertanyaanInstrumen || [];
+    appSettings = d.Settings || {};
+
+    updateUIFromSettings();
+    updateSiswaSelect();
+    updateKelasSelect();
+    updateDashboardCounts();
+    if (currentSection) showSection(currentSection, currentLayananType);
+};
 
 // Questions Definition
 const DEFAULT_QUESTIONS = {
@@ -385,17 +424,47 @@ function showSection(id, type = '') {
 }
 
 // Data Operations
-async function refreshData() {
-    if (isRefreshing) return; isRefreshing = true;
+async function refreshData(force = false) {
+    if (isRefreshing) return;
+
+    // Load from cache first for instant UI
+    if (isFirstLoad) {
+        const cachedData = loadFromCache();
+        if (cachedData) {
+            applyData(cachedData);
+            isFirstLoad = false;
+            if (!force) {
+                // Background refresh
+                isRefreshing = true;
+                setTimeout(async () => {
+                    try {
+                        const res = await callAPI('getBatchData', { sheetNames: Object.keys(TABLE_CONFIG).concat(['JawabanInstrumen', 'PertanyaanInstrumen', 'Settings']) });
+                        if (res.success) {
+                            saveToCache(res.data);
+                            applyData(res.data);
+                        }
+                    } finally { isRefreshing = false; }
+                }, 1000);
+                return;
+            }
+        }
+    }
+
+    isRefreshing = true;
+    const loader = document.getElementById('loading-indicator');
+    if (loader) loader.classList.remove('d-none');
+
     try {
         const res = await callAPI('getBatchData', { sheetNames: Object.keys(TABLE_CONFIG).concat(['JawabanInstrumen', 'PertanyaanInstrumen', 'Settings']) });
         if (res.success) {
-            const d = res.data;
-            dataSiswa = d.Siswa; dataLayanan = d.LayananBK; dataGuru = d.Guru; dataWali = d.WaliKelas; dataDCM = d.DCM; dataPotensi = d.Potensi; dataMinat = d.MinatBakat; dataGayaBelajar = d.GayaBelajar; dataJawaban = d.JawabanInstrumen; dataPertanyaan = d.PertanyaanInstrumen; appSettings = d.Settings;
-            updateUIFromSettings(); updateSiswaSelect(); updateKelasSelect(); updateDashboardCounts();
-            if (currentSection) showSection(currentSection, currentLayananType);
+            saveToCache(res.data);
+            applyData(res.data);
+            isFirstLoad = false;
         }
-    } finally { isRefreshing = false; }
+    } finally {
+        isRefreshing = false;
+        if (loader) loader.classList.add('d-none');
+    }
 }
 
 function renderTable(name, data) {
