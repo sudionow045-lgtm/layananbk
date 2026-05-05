@@ -744,28 +744,50 @@ async function testBackendConnection() {
 
 async function handleSaveSettings(e) {
     e.preventDefault();
-    const s = {
-        SchoolName: document.getElementById('setting-school-name').value,
-        AcademicYear: document.getElementById('setting-academic-year').value
-    };
+    const btn = e.target.querySelector('button[type="submit"]');
+    const originalText = btn.innerHTML;
 
-    // Handle Kop Surat image
-    const kopImg = document.getElementById('preview-image-container').querySelector('img');
-    if (kopImg) {
-        // Simpan hanya jika itu base64 (baru upload) atau jika kita ingin memastikan tersimpan
-        // Untuk amannya, kita kirim saja src-nya jika ada
-        s.KopSurat = kopImg.src;
-    } else {
-        s.KopSurat = 'https://imgur.com/3hAG3CN'; // Hapus jika tidak ada gambar
-    }
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Menyimpan...';
 
-    const pass = document.getElementById('setting-admin-pass').value;
-    if (pass) s.AdminPass = pass;
+    try {
+        const s = {
+            SchoolName: document.getElementById('setting-school-name').value,
+            AcademicYear: document.getElementById('setting-academic-year').value
+        };
 
-    const res = await callAPI('updateSettings', { settings: s });
-    if (res.success) {
-        alert('Pengaturan berhasil disimpan!');
-        refreshData(true); // Force refresh
+        // Handle Kop Surat image
+        const kopImg = document.getElementById('preview-image-container').querySelector('img');
+        if (kopImg) {
+            // Batas karakter sel Google Sheets adalah 50.000 karakter
+            if (kopImg.src.startsWith('data:image') && kopImg.src.length > 50000) {
+                alert('Gambar Kop Surat terlalu besar untuk disimpan (Maksimal ~37KB dalam format base64). \n\nSaran: Gunakan gambar dengan resolusi lebih rendah atau kompres gambar terlebih dahulu.');
+                btn.disabled = false;
+                btn.innerHTML = originalText;
+                return;
+            }
+            s.KopSurat = kopImg.src;
+        } else {
+            s.KopSurat = 'https://imgur.com/3hAG3CN';
+        }
+
+        const pass = document.getElementById('setting-admin-pass').value;
+        if (pass) s.AdminPass = pass;
+
+        const res = await callAPI('updateSettings', { settings: s });
+        if (res.success) {
+            alert('Pengaturan berhasil disimpan!');
+            document.getElementById('setting-admin-pass').value = ''; // Reset password field
+            await refreshData(true); // Force refresh
+        } else {
+            alert('Gagal menyimpan pengaturan: ' + (res.message || 'Terjadi kesalahan tidak dikenal.'));
+        }
+    } catch (err) {
+        console.error('Save Settings Error:', err);
+        alert('Terjadi kesalahan saat menyimpan pengaturan.');
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = originalText;
     }
 }
 
