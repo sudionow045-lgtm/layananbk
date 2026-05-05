@@ -1,5 +1,5 @@
 // Configuration
-const GAS_URL = 'https://script.google.com/macros/s/AKfycbxER95v3ApOxFbWke0Y9yNPJoxn7OvGKKjI-tkotfJof-v8Cs1xQiNTsjHkBiT3vaLF/exec';
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbxMEiQ8VnfsjwRnHLg--5zIYhBuuR1y_Z1-GNI6t_y_2JB3HRZSe_u5JUgJvFeaxvY8AA/exec';
 
 // State Management
 let currentSection = 'dashboard', currentLayananType = '', userRole = '', currentUser = null, appSettings = {}, isRefreshing = false, isFirstLoad = true;
@@ -320,6 +320,7 @@ const TABLE_CONFIG = {
 document.addEventListener('DOMContentLoaded', () => {
     checkLogin();
     refreshData();
+    toggleLoginFields();
 
     const events = [
         ['login-form', handleLogin], ['form-siswa', (e) => handleSaveGeneric(e, 'Siswa', 'modalSiswa', 'form-siswa', ['NISN', 'Nama', 'Tempat Lahir', 'Tanggal Lahir', 'Jenis Kelamin', 'Agama', 'Nama Orang Tua', 'Kelas', 'Status'], ['siswa-nisn', 'siswa-nama', 'siswa-tempat-lahir', 'siswa-tanggal-lahir', 'siswa-jk', 'siswa-agama', 'siswa-ortu', 'siswa-kelas', 'siswa-status'], 'siswa-id')],
@@ -372,36 +373,57 @@ const logout = () => { localStorage.clear(); location.reload(); };
 async function handleLogin(e) {
     e.preventDefault();
     const role = document.getElementById('login-role').value,
-        password = document.getElementById('password').value,
+        password = document.getElementById('password').value.trim(),
         btn = e.target.querySelector('button[type="submit"]'),
         originalText = btn.innerHTML;
-    btn.disabled = true; btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Memproses...';
+
+    if (!password) {
+        alert('Password wajib diisi!');
+        return;
+    }
+
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Memproses...';
+
     try {
         if (role === 'admin') {
             const usernameField = document.getElementById('username');
             if (!usernameField) {
                 alert('Elemen input username tidak ditemukan!');
+                btn.disabled = false; btn.innerHTML = originalText;
                 return;
             }
             const username = usernameField.value.trim().toLowerCase();
+
+            if (!username) {
+                alert('Username admin wajib diisi!');
+                btn.disabled = false; btn.innerHTML = originalText;
+                return;
+            }
+
             console.log('Attempting Admin Login:', { username });
 
             // Hardcoded check as a fallback if API is unreachable or fails
             const isDefaultAdmin = username === 'admin' && password === 'Lajoroni234';
 
-            const res = await callAPI('login', { username, password });
-            console.log('Login Response:', res);
+            let res = { success: false };
+            try {
+                res = await callAPI('login', { username, password });
+                console.log('Login Response:', res);
+            } catch (apiErr) {
+                console.warn('API call failed during login:', apiErr);
+            }
 
-            if (res.success || (isDefaultAdmin && !res.success)) {
+            if (res.success || isDefaultAdmin) {
                 if (!res.success && isDefaultAdmin) {
                     console.warn('API Login failed, but using hardcoded fallback for admin.');
-                    alert('Login Berhasil (Mode Offline/Fallback). Koneksi ke Google Script mungkin bermasalah, namun Anda tetap bisa masuk.');
+                    alert('Login Berhasil (Mode Offline/Fallback).\nKoneksi ke Google Script mungkin bermasalah, namun Anda tetap bisa masuk.');
                 }
                 localStorage.setItem('userRole', 'admin');
                 userRole = 'admin';
                 showApp();
             } else {
-                alert(res.message || 'Login Admin gagal. Pastikan password benar.');
+                alert(res.message || 'Login Admin gagal. Pastikan Username dan Password benar.');
             }
         } else {
             if (dataSiswa.length === 0) {
