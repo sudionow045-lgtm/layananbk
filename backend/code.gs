@@ -2,7 +2,7 @@
  * APLIKASI LAYANAN BK - BACKEND (Google Apps Script) - COMPRESSED VERSION
  */
 
-const SPREADSHEET_ID = '1PEOWpAJRX8kgC5B1pfDNhiD3q8K8TGai1rpZsTVcdCM';
+const SPREADSHEET_ID = '1dePFAWsdKhegQw2-z1T5rz_4v7MpnCX2v4mfUnSaQA0';
 const ADMIN_USER = 'admin';
 const ADMIN_PASS = 'Lajoroni234';
 const CACHE_TIME = 600; // 10 menit
