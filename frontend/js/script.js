@@ -721,7 +721,7 @@ async function handleSaveSettings(e) {
         // Untuk amannya, kita kirim saja src-nya jika ada
         s.KopSurat = kopImg.src;
     } else {
-        s.KopSurat = ''; // Hapus jika tidak ada gambar
+        s.KopSurat = 'https://imgur.com/3hAG3CN'; // Hapus jika tidak ada gambar
     }
 
     const pass = document.getElementById('setting-admin-pass').value;
