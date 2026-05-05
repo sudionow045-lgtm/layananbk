@@ -217,20 +217,17 @@
                         </div>
                     </div>
                     <div class="col-md-3">
-                        <a href="https://docs.google.com/spreadsheets/d/1PEOWpAJRX8kgC5B1pfDNhiD3q8K8TGai1rpZsTVcdCM"
-                            target="_blank" class="text-decoration-none">
-                            <div class="card bg-dark text-white mb-4 shadow-sm">
-                                <div class="card-body">
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <div>
-                                            <h5>Spreadsheets</h5>
-                                            <p class="small mb-0">Buka Google Sheets</p>
-                                        </div>
-                                        <i class="fas fa-file-excel fa-3x opacity-50"></i>
+                        <div class="card bg-info text-white mb-4 shadow-sm">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h5>Bantuan</h5>
+                                        <p class="small mb-0">Panduan Penggunaan</p>
                                     </div>
+                                    <i class="fas fa-info-circle fa-3x opacity-50"></i>
                                 </div>
                             </div>
-                        </a>
+                        </div>
                     </div>
                 </div>
 
@@ -510,10 +507,6 @@
             <section id="data-jawaban" class="content-section d-none">
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <h2>Data Jawaban Instrumen</h2>
-                    <a href="https://docs.google.com/spreadsheets/d/1PEOWpAJRX8kgC5B1pfDNhiD3q8K8TGai1rpZsTVcdCM"
-                        target="_blank" class="btn btn-success">
-                        <i class="fas fa-file-excel me-2"></i>Buka di Spreadsheets
-                    </a>
                 </div>
                 <div class="table-responsive">
                     <table class="table table-striped">
@@ -700,7 +693,12 @@
                             </div>
                         </div>
                     </div>
-                    <button type="submit" class="btn btn-primary px-5 mt-3">Simpan Semua Pengaturan</button>
+                    <div class="d-flex gap-2 mt-3">
+                        <button type="submit" class="btn btn-primary px-5">Simpan Semua Pengaturan</button>
+                        <button type="button" class="btn btn-outline-info" onclick="testBackendConnection()">
+                            <i class="fas fa-plug me-2"></i>Tes Koneksi Backend
+                        </button>
+                    </div>
                 </form>
             </section>
         </div>
