@@ -1,5 +1,5 @@
 // Configuration
-const GAS_URL = 'https://script.google.com/macros/s/AKfycbwci3ADaZ-QtBjgRFaULrcqgY1cICvfqnoSrgi9ve603AfL6by3kRJD2K_Aw5Z3ve41xQ/exec';
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbweGlIn_LOG-gfuSX8y9K9SXgELCeDILJT1VzxP_Ip1OmpETVO0m_CvAq9OuSdz6PtQ2g/exec';
 
 // State Management
 let currentSection = 'dashboard', currentLayananType = '', userRole = '', currentUser = null, appSettings = {}, isRefreshing = false, isFirstLoad = true;
