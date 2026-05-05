@@ -116,6 +116,8 @@
                                 <li><a class="dropdown-item" href="javascript:void(0)"
                                         onclick="showSection('data-siswa')">Data Siswa</a></li>
                                 <li><a class="dropdown-item" href="javascript:void(0)"
+                                        onclick="showSection('data-jawaban')">Data Jawaban</a></li>
+                                <li><a class="dropdown-item" href="javascript:void(0)"
                                         onclick="showSection('data-guru')">Data Guru</a></li>
                                 <li><a class="dropdown-item" href="javascript:void(0)"
                                         onclick="showSection('data-wali-kelas')">Data Wali Kelas</a></li>
@@ -203,6 +205,22 @@
                                 </div>
                             </div>
                         </div>
+                    </div>
+                    <div class="col-md-3">
+                        <a href="https://docs.google.com/spreadsheets/d/1PEOWpAJRX8kgC5B1pfDNhiD3q8K8TGai1rpZsTVcdCM"
+                            target="_blank" class="text-decoration-none">
+                            <div class="card bg-dark text-white mb-4 shadow-sm">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h5>Spreadsheets</h5>
+                                            <p class="small mb-0">Buka Google Sheets</p>
+                                        </div>
+                                        <i class="fas fa-file-excel fa-3x opacity-50"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
                     </div>
                 </div>
 
@@ -370,20 +388,28 @@
                     <h2>Analisis Hasil Instrumen BK</h2>
                 </div>
                 <div class="row mb-4">
-                    <div class="col-md-4">
+                    <div class="col-md-3">
+                        <label class="form-label">Instrumen</label>
+                        <select id="analisis-instrumen-type" class="form-select" onchange="generateAnalisis()">
+                            <option value="DCM">Daftar Cek Masalah (DCM)</option>
+                            <option value="Potensi">Kenali Potensi</option>
+                            <option value="Minat">Minat Bakat</option>
+                            <option value="Gaya">Gaya Belajar</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
                         <label class="form-label">Level Analisis</label>
                         <select id="analisis-level" class="form-select" onchange="updateAnalisisFilters()">
                             <option value="individu">Per Individu</option>
-                            <option value="kelompok">Per Kelompok</option>
                             <option value="kelas">Per Kelas</option>
                         </select>
                     </div>
-                    <div class="col-md-4" id="filter-siswa-container">
+                    <div class="col-md-3" id="filter-siswa-container">
                         <label class="form-label">Pilih Siswa</label>
                         <select id="analisis-filter-siswa" class="form-select select-siswa"
                             onchange="generateAnalisis()"></select>
                     </div>
-                    <div class="col-md-4 d-none" id="filter-kelas-container">
+                    <div class="col-md-3 d-none" id="filter-kelas-container">
                         <label class="form-label">Pilih Kelas</label>
                         <select id="analisis-filter-kelas" class="form-select" onchange="generateAnalisis()"></select>
                     </div>
@@ -466,6 +492,32 @@
                             </tr>
                         </thead>
                         <tbody id="table-siswa-body"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Data Jawaban Section -->
+            <section id="data-jawaban" class="content-section d-none">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h2>Data Jawaban Instrumen</h2>
+                    <a href="https://docs.google.com/spreadsheets/d/1PEOWpAJRX8kgC5B1pfDNhiD3q8K8TGai1rpZsTVcdCM"
+                        target="_blank" class="btn btn-success">
+                        <i class="fas fa-file-excel me-2"></i>Buka di Spreadsheets
+                    </a>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Tanggal</th>
+                                <th>Nama</th>
+                                <th>Kelas</th>
+                                <th>Instrumen</th>
+                                <th>Jawaban</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="table-jawaban-body"></tbody>
                     </table>
                 </div>
             </section>
@@ -863,6 +915,33 @@
                                 id="pertanyaan-kategori" class="form-control" required></div><button type="submit"
                             class="btn btn-primary w-100">Simpan</button>
                     </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Detail Jawaban -->
+    <div class="modal fade" id="modalDetailJawaban" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Detail Jawaban Instrumen</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="detail-jawaban-info" class="mb-3"></div>
+                    <div class="table-responsive">
+                        <table class="table table-sm table-bordered">
+                            <thead class="table-light">
+                                <tr>
+                                    <th style="width: 50px;">No</th>
+                                    <th>Pertanyaan</th>
+                                    <th style="width: 150px;">Jawaban</th>
+                                </tr>
+                            </thead>
+                            <tbody id="detail-jawaban-body"></tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
