@@ -24,7 +24,7 @@ const Login: React.FC = () => {
         localStorage.setItem('userRole', 'admin');
         window.location.href = '#dashboard'; // Mock routing
       } else {
-        setError(cleanUsername !== 'admin' ? 'Username harus "admin"' : 'Password Admin salah.');
+        setError(cleanUsername !== 'admin' ? 'Username harus "admin"' : 'Password Admin salah atau tidak sesuai pengaturan.');
       }
     } else {
       // Siswa login logic (mock)
