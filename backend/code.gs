@@ -17,7 +17,7 @@ const SHEETS_CONFIG = {
   'MinatBakat': ['ID', 'Tanggal', 'Siswa', 'Minat', 'Bakat'],
   'GayaBelajar': ['ID', 'Tanggal', 'Siswa', 'Tipe Gaya Belajar'],
   'JawabanInstrumen': ['ID', 'Tanggal', 'NISN', 'Nama', 'Kelas', 'Instrumen', 'Jawaban'],
-  'PertanyaanInstrumen': ['ID', 'Instrumen', 'Pertanyaan', 'Kategori'],
+  'PertanyaanInstrumen': ['ID', 'Instrumen', 'Pertanyaan', 'Kategori', 'Opsi'],
   'Settings': ['Key', 'Value']
 };
 
@@ -27,6 +27,17 @@ const getSS = () => _ss || (_ss = SpreadsheetApp.openById(SPREADSHEET_ID));
 function doPost(e) {
   try {
     const { action, payload } = JSON.parse(e.postData.contents);
+    return createResponse(runAction(action, payload));
+  } catch (error) {
+    return createResponse({ success: false, message: error.toString() });
+  }
+}
+
+/**
+ * Helper function to run actions, accessible by doPost and google.script.run
+ */
+function runAction(action, payload) {
+  try {
     const actions = {
       login: () => {
         const settings = getSettings();
@@ -46,17 +57,62 @@ function doPost(e) {
         return { success: true, message: 'Cache dibersihkan' };
       }
     };
-    return createResponse(actions[action] ? actions[action]() : { success: false, message: 'Aksi tidak dikenal' });
+    return actions[action] ? actions[action]() : { success: false, message: 'Aksi tidak dikenal: ' + action };
   } catch (error) {
-    return createResponse({ success: false, message: error.toString() });
+    return { success: false, message: error.toString() };
   }
 }
 
-function doGet() { return HtmlService.createHtmlOutput("Backend Aktif. ID: " + SPREADSHEET_ID); }
+function doGet() {
+  return HtmlService.createTemplateFromFile('index')
+    .evaluate()
+    .setTitle('Aplikasi Layanan BK')
+    .addMetaTag('viewport', 'width=device-width, initial-scale=1')
+    .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
+}
+
+function include(filename) {
+  return HtmlService.createHtmlOutputFromFile(filename).getContent();
+}
 
 function setup() {
   Object.keys(SHEETS_CONFIG).forEach(name => getSheet(name));
+  initializePertanyaan();
   return "Setup Berhasil!";
+}
+
+function initializePertanyaan() {
+  const sheet = getSheet('PertanyaanInstrumen');
+  if (sheet.getLastRow() > 1) return;
+
+  const defaultQuestions = [
+    // DCM - A. KESEHATAN
+    { instrumen: 'DCM', teks: 'Sering merasa lelah atau kurang bersemangat.', kategori: 'A. KESEHATAN' },
+    { instrumen: 'DCM', teks: 'Sering sakit kepala atau pusing.', kategori: 'A. KESEHATAN' },
+    // ... (Singkatkan saja untuk inisialisasi awal, user bisa tambah sendiri via UI)
+    // Gaya Belajar (Contoh dengan Opsi)
+    { 
+      instrumen: 'Gaya', 
+      teks: 'Ketika aku mengeja kata-kata, aku biasanya …', 
+      kategori: 'Gaya Belajar', 
+      opsi: JSON.stringify([
+        { v: 'A', t: 'menuliskan kata tersebut' }, 
+        { v: 'B', t: 'menyebutkan kata tersebut' }, 
+        { v: 'C', t: 'menuliskan kata tersebut dengan cara rnenggerak-gerakkan jari di udara' }
+      ]) 
+    }
+  ];
+
+  defaultQuestions.forEach(q => {
+    const rowData = {
+      ID: Utilities.getUuid(),
+      Instrumen: q.instrumen,
+      Pertanyaan: q.teks,
+      Kategori: q.kategori,
+      Opsi: q.opsi || ''
+    };
+    addData('PertanyaanInstrumen', rowData);
+  });
 }
 
 function createResponse(data) {
