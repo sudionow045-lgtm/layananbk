@@ -594,6 +594,21 @@ const toggleLoginFields = () => {
     document.getElementById('field-nisn').classList.toggle('d-none', !isSiswa);
 };
 
+function previewKop(input) {
+    const container = document.getElementById('kop-preview-container');
+    const img = document.getElementById('kop-preview-img');
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            img.src = e.target.result;
+            container.classList.remove('d-none');
+        };
+        reader.readAsDataURL(input.files[0]);
+    } else {
+        container.classList.add('d-none');
+    }
+}
+
 const loadSettingsToForm = () => {
     ['setting-school-name', 'setting-academic-year'].forEach(id => document.getElementById(id).value = appSettings[id.includes('school') ? 'SchoolName' : 'AcademicYear'] || '');
     if (appSettings.KopSurat) { document.getElementById('kop-preview-img').src = appSettings.KopSurat; document.getElementById('kop-preview-container').classList.remove('d-none'); }
@@ -601,8 +616,19 @@ const loadSettingsToForm = () => {
 
 async function handleSaveSettings(e) {
     e.preventDefault();
-    const s = { SchoolName: document.getElementById('setting-school-name').value, AcademicYear: document.getElementById('setting-academic-year').value };
-    const pass = document.getElementById('setting-admin-pass').value; if (pass) s.AdminPass = pass;
+    const s = {
+        SchoolName: document.getElementById('setting-school-name').value,
+        AcademicYear: document.getElementById('setting-academic-year').value
+    };
+
+    // Handle Kop Surat image if visible
+    const kopImg = document.getElementById('kop-preview-img');
+    if (kopImg.src && !kopImg.src.startsWith('http')) {
+        s.KopSurat = kopImg.src;
+    }
+
+    const pass = document.getElementById('setting-admin-pass').value;
+    if (pass) s.AdminPass = pass;
     const res = await callAPI('updateSettings', { settings: s });
     if (res.success) { alert('Tersimpan!'); refreshData(); }
 }
@@ -747,13 +773,26 @@ function generateAnalisis() {
         return;
     }
 
+    let kopHtml = '';
+    if (appSettings.KopSurat) {
+        kopHtml = `<div class="text-center mb-4 border-bottom pb-3">
+            <img src="${appSettings.KopSurat}" class="img-fluid" style="max-height: 120px;">
+        </div>`;
+    } else {
+        kopHtml = `<div class="text-center mb-4 border-bottom pb-3">
+            <h3>${appSettings.SchoolName || 'Layanan BK'}</h3>
+            <p class="mb-0">Analisis Hasil Instrumen Siswa</p>
+        </div>`;
+    }
+
     container.innerHTML = `
         <div class="card shadow-sm">
-            <div class="card-header bg-white d-flex justify-content-between align-items-center">
+            <div class="card-header bg-white d-flex justify-content-between align-items-center d-print-none">
                 <strong>${label}</strong>
                 <button class="btn btn-sm btn-outline-primary" onclick="window.print()"><i class="fas fa-print me-1"></i>Cetak</button>
             </div>
             <div class="card-body">
+                ${kopHtml}
                 <div class="row">
                     <div class="col-md-6">
                         <canvas id="analisis-chart"></canvas>
